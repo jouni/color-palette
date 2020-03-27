@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Lumo color palette generator and contrast checker</title>
+  <link rel="stylesheet" href="current-lumo.css">
+  <style>
+    html {
+      --heading-text-color: var(--gray-900);
+      --body-text-color: var(--gray-800);
+      --secondary-text-color: var(--gray-600);
+      --tertiary-text-color: var(--gray-500);
+      --disabled-text-color: var(--gray-400);
+
+      background-color: var(--surface-1);
+      color: var(--body-text-color);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .row {
+      display: flex;
+    }
+
+    .palettes {
+      flex: auto;
+    }
+
+    [class*="color-scale"] {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1rem 2rem;
+    }
+
+    [class*="color-scale"] > div {
+      height: 3rem;
+      flex: auto;
+      position: relative;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .color-scale-labels {
+      flex-wrap: wrap;
+    }
+
+    .color-scale-labels > h3 {
+      width: 100%;
+      margin: 0 0 1em;
+      font-size: 0.8rem;
+      flex: none;
+      font-weight: 500;
+    }
+
+    .color-scale-labels {
+      padding-bottom: 0;
+    }
+
+    .color-scale-labels > div {
+      height: auto;
+      font-size: 0.75rem;
+    }
+
+    .color-scale .contrast,
+    .color-scale .rgba,
+    .color-scale .rgb {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1.5em;
+      color: var(--tertiary-text-color);
+      font-size: 0.7rem;
+      letter-spacing: -0.05em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .color-scale .rgba {
+      bottom: -2.25rem;
+    }
+
+    .color-scale .rgb {
+      bottom: -3.25rem;
+    }
+
+    .color-scale .rgba,
+    .color-scale .rgb {
+      opacity: 0;
+      white-space: nowrap;
+    }
+
+    .color-scale > div:hover .rgba,
+    .color-scale > div:hover .rgb {
+      opacity: 1;
+    }
+
+    .color-scale .contrast.aa::after,
+    .color-scale .contrast.aaa::after {
+      content: "AA";
+      background-color: green;
+      color: white;
+      display: inline-block;
+      padding: 0.1em 0.3em;
+      border-radius: 0.3em;
+      font-size: 0.7em;
+      font-weight: 500;
+      margin-inline-start: 0.3em;
+    }
+
+    .color-scale .contrast.aaa::after {
+      content: "AAA";
+    }
+
+    /* .color-scale .chart {
+      display: flex;
+      align-items: flex-end;
+      margin: 0 2rem;
+      opacity: 0.5;
+    }
+
+    .color-scale .chart span {
+      width: 4px;
+      height: calc(var(--val) * 3px);
+      background: black;
+      margin: 0 2px;
+    } */
+
+    .surface-1,
+    .surface-1 [class*="color-scale"] {
+      background-color: var(--surface-1);
+    }
+
+    .surface-2,
+    .surface-2 [class*="color-scale"] {
+      background-color: var(--surface-2);
+    }
+
+    .surface-1 [class*="color-scale"].current {
+      background: var(--lumo-base-color) linear-gradient(var(--lumo-contrast-5pct), var(--lumo-contrast-5pct));
+    }
+
+    .surface-2 [class*="color-scale"].current {
+      background: var(--lumo-base-color);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .surface-1 [class*="color-scale"].current {
+        background: var(--lumo-base-color);
+      }
+
+      .surface-2 [class*="color-scale"].current {
+        /* --lumo-tint-5pct */
+        background: var(--lumo-base-color) linear-gradient(hsla(214, 65%, 85%, 0.06), hsla(214, 65%, 85%, 0.06));
+      }
+    }
+
+    .palettes.surface-1::before,
+    .palettes.surface-2::before {
+      padding: 1rem;
+      display: block;
+      font-weight: 600;
+      color: var(--heading-text-color);
+    }
+
+    .palettes.surface-1::before {
+      content: "Surface 1";
+    }
+
+    .palettes.surface-2::before {
+      content: "Surface 2";
+    }
+
+    .button {
+      color: var(--blue-600);
+      background-color: var(--gray-50);
+      padding: 0.5em 1em;
+      display: inline-flex;
+      align-items: center;
+      margin: 1em 0.25em;
+      border-radius: 0.25em;
+      line-height: 1;
+      font-weight: 500;
+    }
+
+    .button.primary {
+      background-color: var(--blue-600);
+      color: var(--surface-2);
+    }
+
+    .color-scale:hover {
+      background-image: repeating-linear-gradient(
+        to right,
+        transparent,
+        transparent 1%,
+        var(--gray-50) 1%,
+        var(--gray-50) 2%
+      );
+    }
+
+    .texts {
+      padding: 2rem;
+    }
+
+    .heading-text {
+      color: var(--heading-text-color);
+      font-weight: 600;
+      font-size: 1.125rem;
+    }
+
+    .body-text {
+      color: var(--body-text-color);
+    }
+
+    .secondary-text {
+      color: var(--secondary-text-color);
+      font-size: 0.9rem;
+    }
+
+    .tertiary-text {
+      color: var(--tertiary-text-color);
+      font-size: 0.85rem;
+    }
+  </style>
+  <script type="module">
+    import {BezierEasing} from './BezierEasing.js';
+    import {normal as blend} from './node_modules/color-blend/dist/index.mjs';
+
+    const values = [0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+    const palettesContainer = document.querySelector('.palettes');
+    palettesContainer.innerHTML += `<section class="color-scale-labels"><h3>New</h3></section>`;
+
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const styleEl = createStyleElement(prefersDark);
+
+    values.forEach((val, i) => {
+      if(i === 0) return; // Ignore color-0
+      palettesContainer.lastChild.innerHTML += `<div>${val}</div>`;
+    });
+
+    function generatePalette(name, hue, saturation, lightnessThreshold, lightnessSteepness, dark) {
+      const opacityCurve = BezierEasing(0.52, 0.48, 0.2, 1);
+      const lightnessCurve = BezierEasing(prefersDark? 0.9 : 0.1, prefersDark? 1 : 0.2, prefersDark? 1-lightnessSteepness : lightnessSteepness, prefersDark? 0.7 : 1);
+
+      palettesContainer.innerHTML += `<section class="color-scale ${name}"></section>`;
+
+      let props = '';
+
+      values.forEach((val, i) => {
+        if(i === 0) return; // Ignore color-0
+
+        const lightness = ((lightnessThreshold * lightnessCurve(dark ? 0.5 + i/(values.length-1)*0.5 : 1.07 - i/(values.length-1))) * 100).toFixed();
+        const opacity = opacityCurve(i/(values.length-1)).toFixed(2);
+
+        props += `--${name}-${val}: hsla(${hue}, ${saturation}%, ${lightness}%, ${opacity});\n`;
+
+        palettesContainer.lastChild.innerHTML += `<div style="background-color: var(--${name}-${val});"></div>`;
+      });
+
+      styleEl.sheet.insertRule(`html {\n${props}}`);
+    }
+
+
+    if (prefersDark) {
+      generatePalette('gray', 216, 20, 1, 0.2, true);
+      generatePalette('blue', 216, 95, 0.9, 0.31, true);
+      generatePalette('red', 0, 95, 0.8, 0.31, true);
+      generatePalette('green', 130, 70, 0.55, 0.5, true);
+      generatePalette('yellow', 48, 100, 0.5, 0.4, true);
+    } else {
+      generatePalette('gray', 216, 10, 0.8, 0.4);
+      generatePalette('blue', 216, 90, 0.8, 0.31);
+      generatePalette('red', 0, 90, 0.77, 0.31);
+      generatePalette('green', 130, 70, 0.6, 0.5);
+      generatePalette('yellow', 48, 100, 0.5, 0.4);
+    }
+
+
+    const gray50 = getComputedColor(document.querySelector('.color-scale.gray > :first-child'), 'background-color');
+    const surface1 = blend(prefersDark ? {r:20,g:20,b:20,a:1} : {r:255,g:255,b:255,a:1}, gray50);
+    const surface2 = blend(surface1, {r:255,g:255,b:255,a: prefersDark? 0.04 : 0.8});
+    document.documentElement.style.setProperty('--surface-1', `rgb(${surface1.r},${surface1.g},${surface1.b})`);
+    document.documentElement.style.setProperty('--surface-2', `rgb(${surface2.r},${surface2.g},${surface2.b})`);
+
+    const palettesContainer2 = palettesContainer.cloneNode(true);
+    palettesContainer.classList.add('surface-1');
+    palettesContainer2.classList.add('surface-2');
+    palettesContainer.parentNode.insertBefore(palettesContainer2, palettesContainer);
+
+    // Turn 'rgba(0, 0, 0, 0)' into {r: 0, g: 0, b: 0, a: 0}
+    function parseColor(string) {
+      const parts = string.split('(')[1].split(')')[0].split(',').map(value => Number(value));
+      const alpha = parts[3] === undefined ? 1 : parts[3];
+      return {r: parts[0], g: parts[1], b: parts[2], a: alpha}
+    }
+
+    function getComputedColor(el, prop) {
+      const computedColorString = window.getComputedStyle(el).getPropertyValue(prop || 'color');
+      return parseColor(computedColorString);
+    }
+
+    // https://stackoverflow.com/questions/9733288/how-to-programmatically-calculate-the-contrast-ratio-between-two-colors
+    function luminanace(r, g, b) {
+      const a = [r, g, b].map(function (v) {
+        v /= 255;
+        return v <= 0.03928
+          ? v / 12.92
+          : Math.pow( (v + 0.055) / 1.055, 2.4 );
+      });
+      return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    // https://stackoverflow.com/questions/9733288/how-to-programmatically-calculate-the-contrast-ratio-between-two-colors
+    function contrast(rgb1, rgb2) {
+      const lum1 = luminanace(rgb1.r, rgb1.g, rgb1.b);
+      const lum2 = luminanace(rgb2.r, rgb2.g, rgb2.b);
+      const brightest = Math.max(lum1, lum2);
+      const darkest = Math.min(lum1, lum2);
+      return (brightest + 0.05)
+         / (darkest + 0.05);
+    }
+
+    const baseColor = getComputedColor(document.documentElement, 'background-color');
+
+    Array.from(document.querySelectorAll('.color-scale > div')).forEach(el => {
+      const color = getComputedColor(el, 'background-color');
+      const bgColor = blend(baseColor, getComputedColor(el.parentNode, 'background-color'));
+
+      const blendedColor = blend(bgColor, color);
+
+      if (bgColor.a < 0.999 || blendedColor.a < 0.999) {
+        console.warn('Opacity detected', bgColor, blendedColor);
+      }
+
+      const contrastValue = contrast(bgColor, blendedColor).toFixed(2);
+      const level = contrastValue >= 7 ? ' aaa' : (contrastValue >= 4.5 ? ' aa' : '');
+      if (color.a < 0.999) {
+        el.classList.add('has-alpha');
+      }
+      el.innerHTML += `<span class="contrast${level}">${contrastValue}</span>`;
+      el.innerHTML += `<span class="rgba">rgba(${color.r}, ${color.g}, ${color.b}, ${color.a.toFixed(2)})</span>`;
+      el.innerHTML += `<span class="rgb">rgb(${blendedColor.r}, ${blendedColor.g}, ${blendedColor.b})</span>`;
+
+      // let chart = el.parentNode.querySelector('.chart');
+      // if (chart || (chart = document.createElement('span'))) {
+      //   chart.classList.add('chart');
+      //   chart.innerHTML += `<span style="--val: ${contrastValue}"></span>`;
+      //   el.parentNode.appendChild(chart);
+      // }
+    });
+
+
+    function createStyleElement(dark) {
+      const styleEl = document.createElement('style');
+      if (dark) {
+        styleEl.setAttribute('media', '(prefers-color-scheme: dark)');
+      }
+      document.head.appendChild(styleEl);
+      return styleEl;
+    }
+  </script>
+</head>
+
+<body>
+
+  <div class="row">
+    <div class="palettes">
+      <section class="color-scale-labels current">
+        <h3>Current</h3>
+        <div>5%</div>
+        <div>10%</div>
+        <div>20%</div>
+        <div>30%</div>
+        <div>40%</div>
+        <div>50%</div>
+        <div>60%</div>
+        <div>70%</div>
+        <div>80%</div>
+        <div>90%</div>
+        <div>100%</div>
+      </section>
+      <section class="color-scale current">
+        <div style="background-color: var(--lumo-contrast-5pct);"></div>
+        <div style="background-color: var(--lumo-contrast-10pct);"></div>
+        <div style="background-color: var(--lumo-contrast-20pct);"></div>
+        <div style="background-color: var(--lumo-contrast-30pct);"></div>
+        <div style="background-color: var(--lumo-contrast-40pct);"></div>
+        <div style="background-color: var(--lumo-contrast-50pct);"></div>
+        <div style="background-color: var(--lumo-contrast-60pct);"></div>
+        <div style="background-color: var(--lumo-contrast-70pct);"></div>
+        <div style="background-color: var(--lumo-contrast-80pct);"></div>
+        <div style="background-color: var(--lumo-contrast-90pct);"></div>
+        <div style="background-color: var(--lumo-contrast);"></div>
+      </section>
+      <section class="color-scale-labels current">
+        <div>10%</div>
+        <div>50%</div>
+        <div>100%</div>
+        <div>Text</div>
+      </section>
+      <section class="color-scale current">
+        <div style="background-color: var(--lumo-primary-color-10pct);"></div>
+        <div style="background-color: var(--lumo-primary-color-50pct);"></div>
+        <div style="background-color: var(--lumo-primary-color);"></div>
+        <div style="background-color: var(--lumo-primary-text-color);"></div>
+      </section>
+      <section class="color-scale current">
+        <div style="background-color: var(--lumo-error-color-10pct);"></div>
+        <div style="background-color: var(--lumo-error-color-50pct);"></div>
+        <div style="background-color: var(--lumo-error-color);"></div>
+        <div style="background-color: var(--lumo-error-text-color);"></div>
+      </section>
+      <section class="color-scale current">
+        <div style="background-color: var(--lumo-success-color-10pct);"></div>
+        <div style="background-color: var(--lumo-success-color-50pct);"></div>
+        <div style="background-color: var(--lumo-success-color);"></div>
+        <div style="background-color: var(--lumo-success-text-color);"></div>
+      </section>
+    </div>
+  </div>
+
+
+  <section class="texts surface-2">
+    <div class="heading-text">Heading text</div>
+    <!-- <div class="body-text">Body text</div> -->
+    <div class="secondary-text">Secondary text</div>
+    <!-- <div class="tertiary-text">Tertiary text</div> -->
+
+    <p class="body-text">Body text, lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
+    <div style="color: var(--blue-600)">Link text</div>
+    <div class="button">Button</div>
+    <div class="button primary">Button</div>
+  </section>
+</body>
+
+</html>

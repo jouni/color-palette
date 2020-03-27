@@ -1,0 +1,15 @@
+{
+  "name": "color-palette",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "color-blend": "^2.0.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jouni Koivuviita <jouni@vaadin.com>",
+  "license": "Apache-2.0"
+}
