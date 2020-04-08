@@ -33,6 +33,7 @@
 
     .palettes {
       flex: auto;
+      cursor: default;
     }
 
     .palette,
@@ -43,14 +44,12 @@
     }
 
     .labels > div {
-      flex: auto;
       font-size: 0.75rem;
       opacity: 0.7;
-      flex-basis: 0;
-      min-width: 0;
     }
 
-    .palette .swatch {
+    .labels > div,
+    .swatch {
       flex: auto;
       flex-basis: 0;
       min-width: 0;
@@ -58,38 +57,38 @@
       z-index: 1;
     }
 
-    .palette .swatch .color {
+    .swatch .color {
       display: block;
       height: 2rem;
     }
 
-    .palette .swatch .contrast {
+    .swatch .contrast {
       display: flex;
       min-width: 0;
       align-items: center;
       font-size: 0.7em;
     }
 
-    .palette .swatch .contrast::after {
+    .swatch .contrast::before {
       content: "";
       flex: none;
       width: 0.6em;
       height: 0.6em;
       border-radius: 50%;
-      margin: 0 0.2em;
+      margin-inline-end: 0.4em;
     }
 
-    .palette .swatch .contrast.white::after {
+    .swatch .contrast.white::before {
       background: white;
       box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
     }
 
-    .palette .swatch .contrast.black::after {
+    .swatch .contrast.black::before {
       background: black;
       box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
     }
 
-    .palette .swatch .contrast[level]::be {
+    .swatch .contrast[level]::after {
       content: attr(level);
       text-transform: uppercase;
       background-color: green;
@@ -102,15 +101,15 @@
       margin-inline-start: 0.2em;
     }
 
-    .palette .swatch:not(:hover) .contrast[level]::be {
+    .swatch:not(:hover) .contrast[level]::after {
       opacity: 0;
     }
 
-    .palette .swatch:not(:hover) .contrast:not([level]) {
+    .swatch:not(:hover) .contrast:not([level]) {
       opacity: 0.25;
     }
 
-    .palette .swatch .contrast[level="aaa"] {
+    .swatch .contrast[level="aaa"] {
       font-weight: 500;
     }
 
@@ -169,15 +168,19 @@
       padding: 0.5em 1em;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       margin: 1em 0.25em;
       border-radius: 0.25em;
       line-height: 1;
       font-weight: 500;
+      box-sizing: border-box;
+      height: 2.25rem;
     }
 
     .button.primary {
       color: white;
       background-color: var(--blue-500);
+      min-width: 5.5em;
     }
 
     .link {
@@ -195,10 +198,11 @@
       font-weight: 500;
       min-width: 12em;
       border-radius: 0.25rem;
+      border: 1px solid var(--gray-50);
     }
 
     .focus {
-      box-shadow: 0 0 0 2px var(--blue-200);
+      box-shadow: 0 0 0 1px var(--base-color), 0 0 0 3px var(--blue-200);
     }
 
     .heading-text {
@@ -410,19 +414,17 @@
       hue: 216,
       saturation: 90,
       contrastMin: 0.06,
-      contrastMax: 0.8,
-      contrastSteepness: 0.6,
-      alphaMin: 0.7
+      contrastMax: 0.9,
+      contrastSteepness: 0.42,
+      alphaMin: 1
     };
     appendPalette(blue);
     appendPalette({
       ...blue,
       dark: true,
-      contrastMin: 0.4,
+      contrastMin: 0.14,
       contrastMax: 0.9,
-      contrastSteepness: 0.25,
-      alphaMin: 0.1,
-      alphaSteepness: 0.2
+      contrastSteepness: 0.35,
     });
 
     const red = {
@@ -469,9 +471,9 @@
     Array.from(document.querySelectorAll('.swatch .color')).forEach(el => {
       const contrast = calculateContrast(el);
       el.parentNode.innerHTML += `
-        <span class="contrast bg" ${contrast.bg.level ? `level="${contrast.bg.level}"` : ''}>${contrast.bg.value.toFixed(2)}</span>
-        <span class="contrast white" ${contrast.white.level ? `level="${contrast.white.level}"` : ''}>${contrast.white.value.toFixed(2)}</span>
-        <span class="contrast black" ${contrast.black.level ? `level="${contrast.black.level}"` : ''}>${contrast.black.value.toFixed(2)}</span>
+        <span class="contrast bg" ${contrast.bg.level ? `level="${contrast.bg.level}"` : ''} title="Contrast with background">${contrast.bg.value.toFixed(2)}</span>
+        <span class="contrast white" ${contrast.white.level ? `level="${contrast.white.level}"` : ''} title="Contrast with white">${contrast.white.value.toFixed(2)}</span>
+        <span class="contrast black" ${contrast.black.level ? `level="${contrast.black.level}"` : ''} title="Contrast with black">${contrast.black.value.toFixed(2)}</span>
       `;
     })
   </script>
