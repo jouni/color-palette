@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="current-lumo.css">
   <style>
     html {
-      background-color: var(--base-color);
       color: var(--body-text-color);
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -21,6 +20,12 @@
       --tertiary-text-color: var(--gray-500);
       --disabled-text-color: var(--gray-400);
       --link-text-color: var(--blue-600);
+
+      --button-bg: var(--blue-500);
+    }
+
+    .dark * {
+      --button-bg: var(--blue-400);
     }
 
     body {
@@ -29,26 +34,41 @@
 
     .row {
       display: flex;
+      min-height: 100vh;
+    }
+
+    .light:not(.palette),
+    .dark:not(.palette) {
+      flex: auto;
+      background-color: var(--surface-1);
+      color: var(--body-text-color);
+    }
+
+    .dark:not(.palette) {
+      background-color: var(--surface-3);
     }
 
     .palettes {
       flex: auto;
       cursor: default;
+      overflow: hidden;
     }
 
-    .palette,
-    .labels {
+    .palettes h3 {
+      margin: 0;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      margin: 1.5rem 1rem 0.5rem;
+      opacity: 0.8;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .palette {
       display: flex;
-      padding: 1rem;
-      padding-bottom: 0;
+      padding: 0 1rem;
     }
 
-    .labels > div {
-      font-size: 0.75rem;
-      opacity: 0.7;
-    }
-
-    .labels > div,
     .swatch {
       flex: auto;
       flex-basis: 0;
@@ -58,15 +78,19 @@
     }
 
     .swatch .color {
-      display: block;
+      display: flex;
+      padding: 0.5em 0.8em;
+      font-size: 0.6em;
+      font-weight: 600;
       height: 2rem;
+      box-sizing: border-box;
     }
 
     .swatch .contrast {
       display: flex;
       min-width: 0;
       align-items: center;
-      font-size: 0.7em;
+      font-size: 0.6em;
     }
 
     .swatch .contrast::before {
@@ -101,12 +125,20 @@
       margin-inline-start: 0.2em;
     }
 
+    .swatch .contrast[level="aa-bold"]::after {
+      content: "AA (B)";
+    }
+
     .swatch:not(:hover) .contrast[level]::after {
       opacity: 0;
     }
 
     .swatch:not(:hover) .contrast:not([level]) {
-      opacity: 0.25;
+      opacity: 0;
+    }
+
+    .swatch:not(:hover) .contrast[level="aa-bold"] {
+      opacity: 0.7;
     }
 
     .swatch .contrast[level="aaa"] {
@@ -127,44 +159,13 @@
       );
     }
 
-    .light,
-    .dark {
-      background: var(--base-color);
-      color: var(--body-text-color);
-    }
-
-    .light {
-      --surface-1: var(--base-color) linear-gradient(hsla(210, 0%, 100%, 0.6), hsla(210, 0%, 100%, 0.6));
-      --surface-2: var(--base-color) linear-gradient(hsla(210, 0%, 100%, 1), hsla(210, 0%, 100%, 1));
-    }
-
-    .dark {
-      --surface-1: var(--base-color) linear-gradient(var(--gray-50), var(--gray-50));
-      --surface-2: var(--base-color) linear-gradient(var(--gray-100), var(--gray-100));
-    }
-
-    .surface {
-      display: inline-block;
-      width: 50px;
-      height: 50px;
-      background: var(--surface-1);
-    }
-
-    .surface.two {
-      background: var(--surface-2);
-    }
-
-    .palettes .current {
-      background-color: var(--lumo-base-color);
-    }
-
     .testing {
       padding: 2rem;
     }
 
     .button {
       color: var(--link-text-color);
-      background-color: var(--gray-50);
+      background-color: var(--blue-50);
       padding: 0.5em 1em;
       display: inline-flex;
       align-items: center;
@@ -177,10 +178,36 @@
       height: 2.25rem;
     }
 
+    .button.danger {
+      color: var(--red-600);
+      background-color: var(--red-50);
+    }
+
+    .button.success {
+      color: var(--green-600);
+      background-color: var(--green-50);
+    }
+
     .button.primary {
       color: white;
-      background-color: var(--blue-500);
+      background-color: var(--button-bg);
       min-width: 5.5em;
+    }
+
+    .button.danger.primary {
+      --button-bg: var(--red-500);
+    }
+
+    .dark .button.danger.primary {
+      --button-bg: var(--red-400);
+    }
+
+    .button.success.primary {
+      --button-bg: var(--green-500);
+    }
+
+    .dark .button.success.primary {
+      --button-bg: var(--green-400);
     }
 
     .link {
@@ -196,13 +223,27 @@
       background-color: var(--gray-100);
       color: var(--body-text-color);
       font-weight: 500;
-      min-width: 12em;
+      min-width: 10em;
       border-radius: 0.25rem;
       border: 1px solid var(--gray-50);
     }
 
+    .text-input.invalid {
+      background-color: var(--red-50);
+      border-color: var(--red-50);
+      color: var(--red-900);
+    }
+
+    .text-input.valid {
+      /* background-color: var(--green-100); */
+      border-color: var(--green-200);
+      /* color: var(--green-900); */
+    }
+
+    :focus,
     .focus {
-      box-shadow: 0 0 0 1px var(--base-color), 0 0 0 3px var(--blue-200);
+      outline: 0;
+      box-shadow: 0 0 0 1px var(--surface-1), 0 0 0 3px var(--blue-200);
     }
 
     .heading-text {
@@ -229,70 +270,105 @@
       position: relative;
     }
 
-    .row .palettes > .current {
+    .current-lumo {
       position: absolute;
       z-index: 100;
       width: 100%;
+      background-color: var(--lumo-base-color);
     }
 
-    .compare:not(:checked) ~ .row .palettes > .current {
+    .show-current-lumo:not(:checked) ~ .row .current-lumo {
       display: none;
+    }
+
+    .show-best-case:checked ~ .row .light:not(.palette) {
+      background-color: var(--surface-3);
+    }
+
+    .show-best-case:checked ~ .row .dark:not(.palette) {
+      background-color: var(--surface-1);
+    }
+
+    input.toggle-btn {
+      position: absolute;
+      opacity: 0;
+    }
+
+    label.toggle-btn {
+      display: inline-flex;
+      padding: 0.4em 0.5em;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 0.25em;
+      margin: 0.5em;
+      font-size: 0.7em;
+    }
+
+    input.toggle-btn:checked + label.toggle-btn {
+      background-color: #333;
+      color: #fff;
+      border-color: transparent;
+    }
+
+    input.toggle-btn:focus + label.toggle-btn {
+      box-shadow: 0 0 0 3px lightblue;
     }
   </style>
   <script type="module">
     import {BezierEasing} from './BezierEasing.js';
     import {normal as blendColors} from './node_modules/color-blend/dist/index.mjs';
-    import {parseColor, getComputedColor, getContrast, hslToRgb, rgbToHsl} from './ColorUtil.js';
+    import {getComputedColor, getContrast, hslToRgb, luminance} from './ColorUtil.js';
 
     function generatePalette(props) {
       const {
         name,
         values = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
-        hue = 0,
-        saturation = 100,
-        contrastMin = 0.4, // 0 == no contrast, 1 == max contrast
-        contrastMax = 0.92,
-        contrastSteepness = 0.2, // how quickly the contrast increases (ease-out vs ease-in). 0 == close to linear
-        alphaMin = 0.1,
-        alphaMax = 1,
-        alphaSteepness = 0.3,
-        dark = false
+        base = {h:0, s:0, l:100, a:1},
+        hue = base.h,
+        saturation = base.s,
+        contrastStart = -1,
+        contrastEnd = 1,
+        contrastCurve = [0, 0, 1, 1], // linear
+        alphaStart = 1,
+        alphaEnd = 1,
+        alphaCurve = [0, 0, 1, 1], // linear
       } = props;
 
-      let x1 = 1 - contrastSteepness,
-          y1 = contrastSteepness,
-          x2 = 1 - contrastSteepness,
-          y2 = 1 - contrastSteepness;
-      const contrastCurve = BezierEasing(x1, y1, x2, y2);
+      const lightnessBase = base.l / 100;
+      const dark = lightnessBase < 0.5;
 
-      x1 = alphaSteepness,
-      y1 = alphaSteepness / 2,
-      x2 = 0,
-      y2 = 1 - alphaSteepness;
-      const alphaCurve = BezierEasing(x1, y1, x2, y2);
+      let lightnessStart = lightnessBase + (dark ? (1 - lightnessBase) * contrastStart : lightnessBase * -contrastStart);
+      if (contrastStart < 0) {
+        lightnessStart = lightnessBase + (dark ? lightnessBase * contrastStart : (1 - lightnessBase) * -contrastStart);
+      }
+
+      let lightnessEnd = lightnessBase + (dark ? (1 - lightnessBase) * contrastEnd : lightnessBase * -contrastEnd);
+      if (contrastEnd < 0) {
+        lightnessEnd = lightnessBase + (dark ? lightnessBase * contrastEnd : (1 - lightnessBase) * -contrastEnd);
+      }
+      const lightnessBezier = new BezierEasing(contrastCurve);
+      const alphaBezier = new BezierEasing(alphaCurve);
 
       const colors = values.map((val, i) => {
-        let sample = i / (values.length - 1);
+        const sample = values.length > 1 ? i / (values.length - 1) : 0;
 
-        let contrast = contrastCurve(sample);
-        contrast = contrastMin + (1 - contrastMin) * contrast * contrastMax;
-        // if (dark) {
-        //   contrast = (1 - contrastMin) + contrastMin * contrast * contrastMax;
-        // }
-        contrast = dark ? contrast : 1 - contrast;
-        contrast = Math.round(contrast * 100);
+        let lightness = lightnessStart + (lightnessEnd - lightnessStart) * lightnessBezier(sample);
+        lightness = Math.min(100, Math.round(lightness * 100));
 
-        let alpha = alphaMin + (1 - alphaMin) * alphaCurve(sample) * alphaMax;
-        alpha = Math.round((alpha + Number.EPSILON) * 100) / 100;
+        let alpha = alphaStart + (1 - alphaStart) * alphaBezier(sample) * alphaEnd;
+        alpha = Math.min(1, Math.round((alpha + Number.EPSILON) * 100) / 100);
 
-        return { h: hue, s: saturation, l: contrast, a: alpha, name: `${name}-${val}` };
+        // Saturation scales together with opacity
+        let s = Math.round(Math.max(0, saturation - (1-alpha)*0.4*saturation));
+
+        return { h: hue, s, l: lightness, a: alpha, name: `${val}` };
       });
 
-      return {name, colors, dark}
+      return {name, colors, dark};
     }
 
     function addPaletteCustomProps(palette) {
-      let props = palette.colors.map(({h, s, l, a, name}) => `--${name}: hsla(${h}, ${s}%, ${l}%, ${a});`).join('\n');
+      let props = palette.colors.map(({h, s, l, a, name}) => `--${palette.name}-${name}: hsla(${h}, ${s}%, ${l}%, ${a});`).join('\n');
 
       const styleEl = document.createElement('style');
       styleEl.classList.add(palette.name);
@@ -303,32 +379,34 @@
 
     function renderPalette(palette) {
       return `
-      <div class="palette ${palette.name}${palette.dark ? ' dark': ''}">
+      <h3>${palette.name}</h3>
+      <section class="palette ${palette.name}${palette.dark ? ' dark': ''}">
         ${palette.colors.map(({h, s, l, a, name}) => `
           <div class="swatch swatch-${name}">
-            <span class="color" style="background-color: hsla(${h},${s}%,${l}%,${a});"></span>
+            <span class="color" style="background-color: hsla(${h},${s}%,${l}%,${a});">${name}</span>
           </div>`
         ).join('')}
-      </div>
+      </section>
       `;
     }
 
     function appendPalette(paletteConf) {
       const palette = generatePalette(paletteConf);
       addPaletteCustomProps(palette);
-      document.querySelector(`${paletteConf.dark ? '.dark' : '.light'} .palettes`).innerHTML += renderPalette(palette);
+      document.querySelector(`${(palette.dark) ? '.dark' : '.light'} .palettes`).innerHTML += renderPalette(palette);
     }
 
     function calculateContrast(el) {
+      let curEl = el;
       const colorStack = [];
       do {
-        let color = getComputedColor(el);
-        if (el === document.documentElement && color.a === 0) {
+        let color = getComputedColor(curEl);
+        if (curEl === document.documentElement && color.a === 0) {
           // Assuming the default white background (user-agent style sheet)
           color = {r:255,g:255,b:255,a:1};
         }
         colorStack.unshift(color);
-      } while ((el = el.parentNode) !== document);
+      } while ((curEl = curEl.parentNode) !== document);
 
       const fg = colorStack.reduce((acc, cur, curIndex, array) => {
         return blendColors(acc, cur);
@@ -343,9 +421,14 @@
       const contrastBg = getContrast(bg, fg);
       const contrastWhite = getContrast({r:255,g:255,b:255,a:1}, fg);
       const contrastBlack = getContrast({r:0,g:0,b:0,a:1}, fg);
-      const levelBg = contrastBg >= 7 ? 'aaa' : (contrastBg >= 4.5 ? 'aa' : undefined);
-      const levelWhite = contrastWhite >= 7 ? 'aaa' : (contrastWhite >= 4.5 ? 'aa' : undefined);
-      const levelBlack = contrastBlack >= 7 ? 'aaa' : (contrastBlack >= 4.5 ? 'aa' : undefined);
+      const levelBg = contrastBg >= 7 ? 'aaa' : (contrastBg >= 4.5 ? 'aa' : (contrastBg >= 3 ? 'aa-bold' : undefined));
+      const levelWhite = contrastWhite >= 7 ? 'aaa' : (contrastWhite >= 4.5 ? 'aa' : (contrastWhite >= 3 ? 'aa-bold' : undefined));
+      const levelBlack = contrastBlack >= 7 ? 'aaa' : (contrastBlack >= 4.5 ? 'aa' : (contrastBlack >= 3 ? 'aa-bold' : undefined));
+
+      el.style.setProperty('color', 'black');
+      if (contrastWhite >= 4.5) {
+        el.style.setProperty('color', 'white');
+      }
 
       return {
         bg: {value: contrastBg, level: levelBg},
@@ -358,228 +441,207 @@
     let darkPalettes = ligthPalettes.cloneNode(true);
     darkPalettes.className = 'dark';
     ligthPalettes.parentNode.appendChild(darkPalettes);
-
     ligthPalettes = ligthPalettes.querySelector('.palettes');
     darkPalettes = darkPalettes.querySelector('.palettes');
 
+
+    const baseLight = {h:210, s:14, l:100};
+    const baseDark =  {h:210, s:14, l:10};
+
+
     const gray = {
       name: 'gray',
-      hue: 216,
-      saturation: 12,
-      contrastMax: 0.85,
-      contrastSteepness: 0.25
-    };
+      base: baseLight,
+      contrastStart: 0.2,
+      contrastEnd: 0.9,
+      contrastCurve: [0.5, 0.2, 0.48, 0.4],
+      alphaStart: 0.2,
+      alphaCurve: [0.3, 0.4, 0.4, 1]
+    }
     appendPalette(gray);
-    appendPalette({...gray, dark: true, contrastMax: 1});
+    appendPalette({...gray,
+      base: baseDark,
+      contrastStart: 0.23,
+      contrastEnd: 1,
+      // contrastCurve: [0.5, 0.2, 0.65, 0.3]
+    });
 
-    // Compute base colors from the gray palette
-    const grayPalette = generatePalette(gray);
-    const baseLight = rgbToHsl(
-      blendColors(
-        {r:255,g:255,b:255,a:1},
-        hslToRgb(
-          grayPalette.colors[0]
-        )
-      )
-    );
-    const baseDark = rgbToHsl(
-      blendColors(
-        {r:0,g:0,b:0,a:1},
-        hslToRgb(
-          grayPalette.colors[grayPalette.colors.length - 1]
-        )
-      )
-    );
-
-    baseLight.name = 'base-color';
-    addPaletteCustomProps(
-      {
-        name: 'base',
-        colors: [baseLight],
-        dark: false
-      }
-    );
-
-    baseDark.name = 'base-color';
-    addPaletteCustomProps(
-      {
-        name: 'base',
-        colors: [baseDark],
-        dark: true
-      }
-    );
 
     const blue = {
       name: 'blue',
-      hue: 216,
+      base: baseLight,
+      contrastStart: 0.3,
+      contrastEnd: 0.82,
       saturation: 90,
-      contrastMin: 0.06,
-      contrastMax: 0.9,
-      contrastSteepness: 0.42,
-      alphaMin: 1
+      contrastCurve: [0.5, 0.2, 0.5, 0.5],
+      alphaStart: 0.15,
+      alphaCurve: [0, 0, 0.3, 1.3]
     };
     appendPalette(blue);
-    appendPalette({
-      ...blue,
-      dark: true,
-      contrastMin: 0.14,
-      contrastMax: 0.9,
-      contrastSteepness: 0.35,
+    appendPalette({...blue,
+      base: baseDark,
+      saturation: 80,
+      // contrastStart: 0.3,
+      // contrastEnd: 0.82,
+      // contrastEnd: 0.75,
+      // contrastCurve: [1, 0, 0.3, 0.4],
+      alphaCurve: [0.1, 0, 0.28, 1.57]
     });
+
 
     const red = {
       name: 'red',
       hue: 3,
-      saturation: 100,
-      contrastMin: 0.06,
-      contrastMax: 0.85,
-      contrastSteepness: 0.65,
-      alphaMin: 0.7
+      base: baseLight,
+      contrastStart: 0.3,
+      contrastEnd: 0.86,
+      saturation: 80,
+      contrastCurve: [0.5, 0, 0.5, 0.5],
+      alphaStart: 0.15,
+      alphaCurve: [0, 0, 0.3, 1.3]
     };
     appendPalette(red);
-    appendPalette({...red, dark: true, contrastSteepness: 0.27});
+    appendPalette({...red,
+      base: baseDark,
+      saturation: 70,
+      // contrastStart: 0.4,
+      // contrastEnd: 0.88,
+      // contrastCurve: [1, 0., 0.3, 0.25],
+      alphaCurve: [0.1, 0, 0.28, 1.57]
+    });
+
 
     const green = {
       name: 'green',
-      hue: 140,
-      saturation: 90,
-      contrastMin: 0.3,
-      contrastMax: 1,
-      contrastSteepness: 1,
-      alphaMin: 0.5,
-      alphaSteepness: 0.2
+      hue: 145,
+      base: baseLight,
+      contrastStart: 0.35,
+      contrastEnd: 0.95,
+      saturation: 85,
+      // contrastCurve: [0.6, 0.6, 0.2, 0.65],
+      alphaStart: 0.15,
+      alphaCurve: [0.1, 0, 0.3, 1.3]
     };
     appendPalette(green);
-    appendPalette({...green, dark: true, contrastSteepness: 0, saturation: 60});
+    appendPalette({...green,
+      base: baseDark,
+      // saturation: 65,
+      contrastStart: 0.25,
+      contrastEnd: 0.4,
+      // contrastCurve: [1, 0, 0.4, 0.2],
+      alphaCurve: [0.1, 0, 0.28, 1.57]
+    });
 
-    // const shadow = {
-    //   name: 'shadow',
-    //   values: [1,2,3],
-    //   hue: 0,
-    //   saturation: 0,
-    //   contrastMin: 1,
-    //   contrastMax: 1,
-    //   contrastSteepness: 0,
-    //   alphaMin: 0.1,
-    //   alphaMax: 0.2,
-    //   alphaSteepness: 0.5
-    // };
-    // appendPalette(shadow);
-    // appendPalette({...shadow, dark: true});
 
-    // Insert contrast values into all color swatches
-    Array.from(document.querySelectorAll('.swatch .color')).forEach(el => {
-      const contrast = calculateContrast(el);
-      el.parentNode.innerHTML += `
-        <span class="contrast bg" ${contrast.bg.level ? `level="${contrast.bg.level}"` : ''} title="Contrast with background">${contrast.bg.value.toFixed(2)}</span>
-        <span class="contrast white" ${contrast.white.level ? `level="${contrast.white.level}"` : ''} title="Contrast with white">${contrast.white.value.toFixed(2)}</span>
-        <span class="contrast black" ${contrast.black.level ? `level="${contrast.black.level}"` : ''} title="Contrast with black">${contrast.black.value.toFixed(2)}</span>
-      `;
-    })
+    const surface = {
+      name: 'surface',
+      base: baseLight,
+      values: [1,2,3],
+      contrastStart: 0.08,
+      contrastEnd: 0
+    };
+    appendPalette(surface);
+    appendPalette({...surface,
+      base: baseDark,
+      contrastStart: 0,
+      contrastEnd: 0.07
+    });
+
+    window.updateContrastInfo = function() {
+      requestAnimationFrame(() => {
+        Array.from(document.querySelectorAll('.swatch')).forEach(swatch => {
+          // Cleanup existing info
+          Array.from(swatch.querySelectorAll('.contrast')).forEach(contrast => {
+            swatch.removeChild(contrast);
+          });
+
+          // Add contrast values
+          const color = swatch.querySelector('.color');
+          if (color) {
+            const contrast = calculateContrast(color);
+            swatch.innerHTML += `
+            <span class="contrast bg" ${contrast.bg.level ? `level="${contrast.bg.level}"` : ''} title="Contrast with background">${contrast.bg.value.toFixed(2)}</span>
+            <span class="contrast white" ${contrast.white.level ? `level="${contrast.white.level}"` : ''} title="Contrast with white">${contrast.white.value.toFixed(2)}</span>
+            <span class="contrast black" ${contrast.black.level ? `level="${contrast.black.level}"` : ''} title="Contrast with black">${contrast.black.value.toFixed(2)}</span>
+            `;
+          }
+        });
+      });
+    }
+
+    window.updateContrastInfo();
   </script>
 </head>
 
 <body>
 
-  <input type="checkbox" class="compare" id="compare"> <label for="compare">Compare to current</label>
+  <input id="show-current-lumo" type="checkbox" class="show-current-lumo toggle-btn">
+  <label for="show-current-lumo" class="toggle-btn">Show current Lumo</label>
+
+  <input id="show-best-case" type="checkbox" class="show-best-case toggle-btn">
+  <label for="show-best-case" class="toggle-btn" onclick="window.updateContrastInfo()">Min/max contrast</label>
+
   <div class="row">
     <div class="light">
       <section class="palettes">
-        <div class="current">
-          <section class="labels current">
-            <div>5%</div>
-            <div>10%</div>
-            <div>20%</div>
-            <div>30%</div>
-            <div>40%</div>
-            <div>50%</div>
-            <div>60%</div>
-            <div>70%</div>
-            <div>80%</div>
-            <div>90%</div>
-            <div>100%</div>
+        <div class="current-lumo">
+          <h3>Contrast</h3>
+          <section class="palette">
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-5pct);">5%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-10pct);">10%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-20pct);">20%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-30pct);">30%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-40pct);">40%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-50pct);">50%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-60pct);">60%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-70pct);">70%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-80pct);">80%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-90pct);">90%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast);">100%</span></div>
           </section>
-          <section class="palette current">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-5pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-10pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-20pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-30pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-40pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-50pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-60pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-70pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-80pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-90pct);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast);"></span></div>
-          </section>
-          <!-- <section class="labels current">
-            <div>10%</div>
+          <h3>Primary</h3>
+          <section class="palette">
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color-10pct);">10%</span></div>
             <div class="swatch"></div>
-            <div>50%</div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color-50pct);">50%</span></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
-            <div>100%</div>
-            <div>Text</div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-          </section> -->
-          <section class="palette current">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color-10pct);"></span></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color-50pct);"></span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-text-color);"></span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color);">100%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-text-color);">Text</span></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
           </section>
-          <section class="palette current">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color-10pct);"></span></div>
+          <h3>Error</h3>
+          <section class="palette">
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color-10pct);">10%</span></div>
             <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color-50pct);"></span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color-50pct);">50%</span></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-text-color);"></span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color);">100%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-text-color);">Text</span></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
           </section>
-          <section class="palette current">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color-10pct);"></span></div>
+          <h3>Success</h3>
+          <section class="palette">
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color-10pct);">10%</span></div>
             <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color-50pct);"></span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color-50pct);">50%</span></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color);">100%</span></div>
+            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-text-color);">Text</span></div>
             <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color);"></span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-text-color);"></span></div>
             <div class="swatch"></div>
             <div class="swatch"></div>
           </section>
         </div>
-
-        <section class="labels">
-          <div>50</div>
-          <div>100</div>
-          <div>200</div>
-          <div>300</div>
-          <div>400</div>
-          <div>500</div>
-          <div>600</div>
-          <div>700</div>
-          <div>800</div>
-          <div>900</div>
-        </section>
       </section>
 
       <section class="testing">
-        <div class="surface one"></div>
-        <div class="surface two"></div>
-
         <div class="heading-text">Heading text</div>
         <!-- <div class="body-text">Body text</div> -->
         <div class="secondary-text">Secondary text</div>
@@ -587,14 +649,25 @@
 
         <p class="body-text">Body text, lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
         <div class="link">Link text</div>
-        <div class="button">Button</div>
-        <div class="button primary">Button</div>
-        <div class="text-input">Text input</div>
+
+        <div class="button" tabindex="0">Button</div>
+        <div class="button primary" tabindex="0">Button</div>
+        <div class="text-input" tabindex="0">Text input</div>
         <br>
 
-        <div class="button focus">Button</div>
-        <div class="button primary focus">Button</div>
-        <div class="text-input focus">Text input</div>
+        <div class="button focus" tabindex="0">Button</div>
+        <div class="button primary focus" tabindex="0">Button</div>
+        <div class="text-input focus" tabindex="0">Text input</div>
+        <br>
+
+        <div class="button danger" tabindex="0">Button</div>
+        <div class="button primary danger" tabindex="0">Button</div>
+        <div class="text-input invalid" tabindex="0">Text input</div>
+        <br>
+
+        <div class="button success" tabindex="0">Button</div>
+        <div class="button primary success" tabindex="0">Button</div>
+        <div class="text-input valid" tabindex="0">Text input</div>
       </section>
     </div>
   </div>

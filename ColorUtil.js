@@ -1,13 +1,18 @@
-// Turn 'rgba(0, 0, 0, 0)' into {r: 0, g: 0, b: 0, a: 0}
+// Turn 'rgba(0, 0, 0, 0)' into {r:0, g:0, b:0, a:0}
+// and 'hsla(0, 0%, 0%, 0)' into {h:0, s:0, l:0, a:0}
 export function parseColor(string) {
-  const parts = string.split('(')[1].split(')')[0].split(',').map(value => Number(value));
-  const alpha = parts[3] === undefined ? 1 : parts[3];
-  return {
-    r: parts[0],
-    g: parts[1],
-    b: parts[2],
-    a: alpha
-  }
+  const tmp = string.trim().split('(');
+  const keys = tmp[0].split('');
+  const values = tmp[1].split(')')[0].split(',').map(value => parseFloat(value));
+
+  const ret = {};
+  keys.forEach((key, i) => {
+    ret[key] = values[i];
+  });
+
+  if (ret.a === undefined) ret.a = 1;
+
+  return ret;
 }
 
 export function getComputedColor(el, prop) {
@@ -16,7 +21,7 @@ export function getComputedColor(el, prop) {
 }
 
 // https://stackoverflow.com/questions/9733288/how-to-programmatically-calculate-the-contrast-ratio-between-two-colors
-export function luminanace(r, g, b) {
+export function luminance({r, g, b}) {
   const a = [r, g, b].map(function(v) {
     v /= 255;
     return v <= 0.03928 ?
@@ -28,8 +33,8 @@ export function luminanace(r, g, b) {
 
 // https://stackoverflow.com/questions/9733288/how-to-programmatically-calculate-the-contrast-ratio-between-two-colors
 export function getContrast(rgb1, rgb2) {
-  const lum1 = luminanace(rgb1.r, rgb1.g, rgb1.b);
-  const lum2 = luminanace(rgb2.r, rgb2.g, rgb2.b);
+  const lum1 = luminance(rgb1);
+  const lum2 = luminance(rgb2);
   const brightest = Math.max(lum1, lum2);
   const darkest = Math.min(lum1, lum2);
   return (brightest + 0.05) /

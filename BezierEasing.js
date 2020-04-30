@@ -57,7 +57,8 @@ function LinearEasing (x) {
   return x;
 }
 
-export function BezierEasing (mX1, mY1, mX2, mY2) {
+export function BezierEasing (curve) {
+  const [mX1, mY1, mX2, mY2] = curve;
   if (!(0 <= mX1 && mX1 <= 1 && 0 <= mX2 && mX2 <= 1)) {
     throw new Error('bezier x values must be in [0, 1] range');
   }
