@@ -18,10 +18,10 @@
       --body-text-color: var(--gray-600);
       --secondary-text-color: var(--gray-400);
       --tertiary-text-color: var(--gray-300);
-      --disabled-text-color: var(--gray-100);
+      --disabled-text-color: var(--gray-200);
 
       --link-text-color: var(--blue-600);
-      --button-bg: var(--blue-600);
+      --button-bg: var(--blue-500);
       --text-field-bg: var(--surface-3);
 
       --surface-1: var(--gray-50);
@@ -35,10 +35,10 @@
       --body-text-color: var(--gray-75);
       --secondary-text-color: var(--gray-200);
       --tertiary-text-color: var(--gray-300);
-      --disabled-text-color: var(--gray-500);
+      --disabled-text-color: var(--gray-400);
 
       --link-text-color: var(--blue-300);
-      --button-bg: var(--blue-700);
+      --button-bg: var(--blue-500);
 
       --surface-1: var(--gray-900);
       --surface-2: var(--gray-800);
@@ -283,6 +283,11 @@
       font-size: 0.85rem;
     }
 
+    .disabled-text {
+      color: var(--disabled-text-color);
+      font-size: 0.85rem;
+    }
+
     .row .palettes {
       position: relative;
     }
@@ -386,6 +391,7 @@
 
     function addPaletteCustomProps(palette) {
       let props = palette.colors.map(({h, s, l, a, name}) => `--${palette.name}-${name}: hsla(${h}, ${s}%, ${l}%, ${a});`).join('\n');
+      console.log(props);
 
       const styleEl = document.createElement('style');
       styleEl.classList.add(palette.name);
@@ -463,7 +469,7 @@
     darkPalettes = darkPalettes.querySelector('.palettes');
 
 
-    const baseLight = {h:210, s:14, l:92};
+    const baseLight = {h:210, s:18, l:92};
 
     appendPalette({
       name: 'gray',
@@ -471,7 +477,7 @@
       values: [0, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900],
       contrastStart: -1,
       contrastEnd: 0.84,
-      contrastCurve: [0.4, 0.1, 0.5, 0.9],
+      contrastCurve: [0.4, 0.1, 0.5, 0.9]
     });
 
 
@@ -479,8 +485,9 @@
       name: 'blue',
       base: baseLight,
       contrastStart: -0.5,
-      contrastEnd: 0.77,
-      saturation: 100,
+      contrastEnd: 0.82,
+      saturation: 95,
+      contrastCurve: [0.28, 0.2, 0.65, 0.9]
     });
 
 
@@ -600,11 +607,12 @@
 
       <section class="testing">
         <div class="heading-text">Heading text</div>
-        <!-- <div class="body-text">Body text</div> -->
         <div class="secondary-text">Secondary text</div>
-        <!-- <div class="tertiary-text">Tertiary text</div> -->
 
-        <p class="body-text">Body text, lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
+        <p class="body-text">Body text, lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          <div class="tertiary-text">Tertiary text</div>
+          <div class="disabled-text">Disabled text</div>
+        </p>
         <div class="link">Link text</div>
 
         <div class="button" tabindex="0">Button</div>
