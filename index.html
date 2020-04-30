@@ -15,17 +15,34 @@
 
     * {
       --heading-text-color: var(--gray-900);
-      --body-text-color: var(--gray-800);
-      --secondary-text-color: var(--gray-600);
-      --tertiary-text-color: var(--gray-500);
-      --disabled-text-color: var(--gray-400);
-      --link-text-color: var(--blue-600);
+      --body-text-color: var(--gray-600);
+      --secondary-text-color: var(--gray-400);
+      --tertiary-text-color: var(--gray-300);
+      --disabled-text-color: var(--gray-100);
 
-      --button-bg: var(--blue-500);
+      --link-text-color: var(--blue-600);
+      --button-bg: var(--blue-600);
+      --text-field-bg: var(--surface-3);
+
+      --surface-1: var(--gray-50);
+      --surface-2: var(--gray-25);
+      --surface-3: var(--gray-0);
     }
 
+    .dark,
     .dark * {
-      --button-bg: var(--blue-400);
+      --heading-text-color: var(--gray-0);
+      --body-text-color: var(--gray-75);
+      --secondary-text-color: var(--gray-200);
+      --tertiary-text-color: var(--gray-300);
+      --disabled-text-color: var(--gray-500);
+
+      --link-text-color: var(--blue-300);
+      --button-bg: var(--blue-700);
+
+      --surface-1: var(--gray-900);
+      --surface-2: var(--gray-800);
+      --surface-3: var(--gray-700);
     }
 
     body {
@@ -220,12 +237,12 @@
       align-items: center;
       padding: 0.25em 0.5em;
       box-sizing: border-box;
-      background-color: var(--gray-100);
+      background-color: var(--text-field-bg);
       color: var(--body-text-color);
       font-weight: 500;
       min-width: 10em;
       border-radius: 0.25rem;
-      border: 1px solid var(--gray-50);
+      /* border: 1px solid var(--gray-50); */
     }
 
     .text-input.invalid {
@@ -383,7 +400,7 @@
       <section class="palette ${palette.name}${palette.dark ? ' dark': ''}">
         ${palette.colors.map(({h, s, l, a, name}) => `
           <div class="swatch swatch-${name}">
-            <span class="color" style="background-color: hsla(${h},${s}%,${l}%,${a});">${name}</span>
+            <span class="color" style="background-color: var(--${palette.name}-${name});">${name}</span>
           </div>`
         ).join('')}
       </section>
@@ -393,7 +410,8 @@
     function appendPalette(paletteConf) {
       const palette = generatePalette(paletteConf);
       addPaletteCustomProps(palette);
-      document.querySelector(`${(palette.dark) ? '.dark' : '.light'} .palettes`).innerHTML += renderPalette(palette);
+      document.querySelector(`.light .palettes`).innerHTML += renderPalette(palette);
+      document.querySelector(`.dark .palettes`).innerHTML += renderPalette(palette);
     }
 
     function calculateContrast(el) {
@@ -445,107 +463,46 @@
     darkPalettes = darkPalettes.querySelector('.palettes');
 
 
-    const baseLight = {h:210, s:14, l:100};
-    const baseDark =  {h:210, s:14, l:10};
+    const baseLight = {h:210, s:14, l:92};
 
-
-    const gray = {
+    appendPalette({
       name: 'gray',
       base: baseLight,
-      contrastStart: 0.2,
-      contrastEnd: 0.9,
-      contrastCurve: [0.5, 0.2, 0.48, 0.4],
-      alphaStart: 0.2,
-      alphaCurve: [0.3, 0.4, 0.4, 1]
-    }
-    appendPalette(gray);
-    appendPalette({...gray,
-      base: baseDark,
-      contrastStart: 0.23,
-      contrastEnd: 1,
-      // contrastCurve: [0.5, 0.2, 0.65, 0.3]
+      values: [0, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700, 800, 900],
+      contrastStart: -1,
+      contrastEnd: 0.84,
+      contrastCurve: [0.4, 0.1, 0.5, 0.9],
     });
 
 
-    const blue = {
+    appendPalette({
       name: 'blue',
       base: baseLight,
-      contrastStart: 0.3,
-      contrastEnd: 0.82,
-      saturation: 90,
-      contrastCurve: [0.5, 0.2, 0.5, 0.5],
-      alphaStart: 0.15,
-      alphaCurve: [0, 0, 0.3, 1.3]
-    };
-    appendPalette(blue);
-    appendPalette({...blue,
-      base: baseDark,
-      saturation: 80,
-      // contrastStart: 0.3,
-      // contrastEnd: 0.82,
-      // contrastEnd: 0.75,
-      // contrastCurve: [1, 0, 0.3, 0.4],
-      alphaCurve: [0.1, 0, 0.28, 1.57]
+      contrastStart: -0.5,
+      contrastEnd: 0.77,
+      saturation: 100,
     });
 
 
-    const red = {
+    appendPalette({
       name: 'red',
       hue: 3,
       base: baseLight,
-      contrastStart: 0.3,
-      contrastEnd: 0.86,
+      contrastStart: -0.5,
+      contrastEnd: 0.82,
       saturation: 80,
-      contrastCurve: [0.5, 0, 0.5, 0.5],
-      alphaStart: 0.15,
-      alphaCurve: [0, 0, 0.3, 1.3]
-    };
-    appendPalette(red);
-    appendPalette({...red,
-      base: baseDark,
-      saturation: 70,
-      // contrastStart: 0.4,
-      // contrastEnd: 0.88,
-      // contrastCurve: [1, 0., 0.3, 0.25],
-      alphaCurve: [0.1, 0, 0.28, 1.57]
     });
 
 
-    const green = {
+    appendPalette({
       name: 'green',
       hue: 145,
       base: baseLight,
-      contrastStart: 0.35,
-      contrastEnd: 0.95,
+      contrastStart: -0.5,
+      contrastEnd: 0.9,
       saturation: 85,
-      // contrastCurve: [0.6, 0.6, 0.2, 0.65],
-      alphaStart: 0.15,
-      alphaCurve: [0.1, 0, 0.3, 1.3]
-    };
-    appendPalette(green);
-    appendPalette({...green,
-      base: baseDark,
-      // saturation: 65,
-      contrastStart: 0.25,
-      contrastEnd: 0.4,
-      // contrastCurve: [1, 0, 0.4, 0.2],
-      alphaCurve: [0.1, 0, 0.28, 1.57]
     });
 
-
-    const surface = {
-      name: 'surface',
-      base: baseLight,
-      values: [1,2,3],
-      contrastStart: 0.08,
-      contrastEnd: 0
-    };
-    appendPalette(surface);
-    appendPalette({...surface,
-      base: baseDark,
-      contrastStart: 0,
-      contrastEnd: 0.07
-    });
 
     window.updateContrastInfo = function() {
       requestAnimationFrame(() => {
