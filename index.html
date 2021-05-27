@@ -437,6 +437,11 @@
       };
     }
 
+    // TODO treat light and dark palettes the same, just add a preset button for the dark palette (assuming there would be color pickers to choose the colors)
+    // Evolve this into a @vaadin/lumo-color package, which only contains the color palette generator and contains the default color style sheets (light.css and dark.css)
+    // Write the selector as `html, :host`, so that the same style sheet can be applied to the document and shadow roots
+    // Create a JS utility that can transform the selector to something more specific, e.g. `html.dark, :host(.dark)`
+
     let ligthPalettes = document.querySelector('.light');
     let darkPalettes = ligthPalettes.cloneNode(true);
     darkPalettes.className = 'dark';
