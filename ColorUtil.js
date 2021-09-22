@@ -15,8 +15,8 @@ export function parseColor(string) {
   return ret;
 }
 
-export function getComputedColor(el, prop) {
-  const computedColorString = window.getComputedStyle(el).getPropertyValue(prop || 'background-color');
+export function getComputedColor(el, prop, pseudo) {
+  const computedColorString = window.getComputedStyle(el, pseudo).getPropertyValue(prop || 'background-color');
   return parseColor(computedColorString);
 }
 

@@ -1,0 +1,365 @@
+<!doctype html>
+<html>
+<head>
+<link rel="stylesheet" href="current-lumo.css">
+
+<style>
+  html {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color-scheme: light dark;
+  }
+
+  .light {
+    --lumo-primary-text-color: hsl(217, 95%, 46%);
+    --lumo-primary-color: hsl(217, 95%, 48%);
+    --lumo-primary-color-50pct: hsla(217, 95%, 48%, 0.5);
+    --lumo-primary-color-10pct: hsla(217, 95%, 48%, 0.1);
+
+    --lumo-error-text-color: hsl(3, 81%, 43%);
+    --lumo-error-color: hsl(3, 81%, 47%);
+    --lumo-error-color-50pct: hsla(3, 91%, 47%, 0.5);
+    --lumo-error-color-10pct: hsla(3, 91%, 47%, 0.1);
+
+    --lumo-success-text-color: hsl(145, 79%, 26%);
+    --lumo-success-color: hsl(145, 70%, 28%);
+    --lumo-success-color-50pct: hsla(145, 90%, 38%, 0.5);
+    --lumo-success-color-10pct: hsla(145, 90%, 38%, 0.1);
+
+    --lumo-shade-50pct: hsla(214, 45%, 20%, 0.52);
+    --lumo-tertiary-text-color: var(--lumo-shade-50pct);
+  }
+
+  .dark {
+    --lumo-primary-text-color: hsl(217, 100%, 77%);
+    --lumo-primary-color: hsl(217, 95%, 48%);
+    --lumo-primary-color-50pct: hsla(217, 100%, 68%, 0.5);
+    --lumo-primary-color-10pct: hsla(217, 100%, 68%, 0.16);
+
+    --lumo-error-text-color: hsl(3, 100%, 79%);
+    --lumo-error-color: hsl(3, 81%, 47%);
+    --lumo-error-color-50pct: hsla(3, 100%, 67%, 0.5);
+    --lumo-error-color-10pct: hsla(3, 100%, 67%, 0.17);
+
+    --lumo-success-text-color: hsl(145, 79%, 46%);
+    --lumo-success-color: hsl(145, 70%, 28%);
+    --lumo-success-color-50pct: hsla(145, 90%, 68%, 0.5);
+    --lumo-success-color-10pct: hsla(145, 90%, 68%, 0.12);
+  }
+
+  .light,
+  .dark,
+  .dim {
+    display: flex;
+    flex-wrap: wrap;
+    flex: auto;
+    background-color: var(--lumo-base-color);
+    color: var(--lumo-body-text-color);
+  }
+
+  .dim {
+    background-color: var(--lumo-contrast-5pct);
+  }
+
+  section {
+    padding: 0.5rem;
+  }
+
+  hr {
+    display: none;
+    width: 100%;
+    height: 1px;
+    border: 0;
+    background: var(--lumo-contrast-20pct);
+  }
+
+  p {
+    margin: 1rem 0.5rem;
+  }
+
+  .low-contrast {
+    outline: 2px dashed red;
+  }
+
+  .secondary {
+    color: var(--lumo-secondary-text-color);
+  }
+
+  .tertiary {
+    color: var(--lumo-tertiary-text-color);
+  }
+
+  .primary {
+    color: var(--lumo-primary-text-color);
+  }
+
+  .error {
+    color: var(--lumo-error-text-color);
+  }
+
+  .success {
+    color: var(--lumo-success-text-color);
+  }
+
+  .badge p {
+    font-size: 0.9em;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    width: min-content;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .badge .primary {
+    background-color: var(--lumo-primary-color-10pct);
+  }
+
+  .badge .error {
+    background-color: var(--lumo-error-color-10pct);
+  }
+
+  .badge .success {
+    background-color: var(--lumo-success-color-10pct);
+  }
+
+  .item p {
+    padding: 0.5em 4em 0.5em 1em;
+    border-radius: 0.25rem;
+  }
+
+  .item .hover {
+    background-color: var(--lumo-primary-color-10pct);
+  }
+
+  .rte {
+    background-color: var(--lumo-contrast-5pct);
+  }
+
+  .rte .button {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    margin: 0;
+    width: min-content;
+    white-space: nowrap;
+    color: var(--lumo-contrast-60pct);
+  }
+
+  .rte .button.hover {
+    background-color: var(--lumo-contrast-5pct);
+    color: var(--lumo-contrast-80pct);
+  }
+
+  .button p {
+    padding: 0.5em 1em;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    background-color: var(--lumo-contrast-5pct);
+    text-align: center;
+    position: relative;
+  }
+
+  .button .primary {
+    color: var(--lumo-primary-text-color);
+  }
+
+  .button .error {
+    color: var(--lumo-error-text-color);
+  }
+
+  .button .success {
+    color: var(--lumo-success-text-color);
+  }
+
+  .button.primary .primary {
+    color: var(--lumo-primary-contrast-color);
+    background-color: var(--lumo-primary-color);
+  }
+
+  .button.primary .error {
+    color: var(--lumo-error-contrast-color);
+    background-color: var(--lumo-error-color);
+  }
+
+  .button.primary .success {
+    color: var(--lumo-success-contrast-color);
+    background-color: var(--lumo-success-color);
+  }
+
+  .button.hover p span::before,
+  .button.active p span::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: currentColor;
+    opacity: 0.05;
+    border-radius: 0.25rem;
+  }
+
+  .button.primary.hover p span::before,
+  .button.active p span::before {
+    opacity: 0.1;
+  }
+
+  .button.primary.active p span::before {
+    background: var(--lumo-contrast-20pct);
+  }
+</style>
+</head>
+<body>
+<section class="light">
+  <section class="text">
+    <p class="body"><span>Body</span></p>
+    <p class="secondary"><span>Secondary</span></p>
+    <p class="tertiary"><span>Tertiary</span></p>
+    <p class="primary"><span>Text</span></p>
+    <p class="error"><span>Text</span></p>
+    <p class="success"><span>Text</span></p>
+  </section>
+
+  <section class="badge">
+    <p class="primary"><span>Badge</span></p>
+    <p class="error"><span>Badge</span></p>
+    <p class="success"><span>Badge</span></p>
+  </section>
+
+  <div>
+    <section class="item">
+      <p><span>Item</span></p>
+      <p class="hover"><span>Item</span></p>
+    </section>
+
+    <section class="rte">
+      <p class="button"><span>B</span></p>
+      <p class="button hover"><span>B</span></p>
+    </section>
+  </div>
+
+  <section class="button">
+    <p class="primary"><span>Button</span></p>
+    <p class="error"><span>Button</span></p>
+    <p class="success"><span>Button</span></p>
+  </section>
+
+  <section class="button hover">
+    <p class="primary"><span>Hover</span></p>
+    <p class="error"><span>Hover</span></p>
+    <p class="success"><span>Hover</span></p>
+  </section>
+
+  <section class="button active">
+    <p class="primary"><span>Active</span></p>
+    <p class="error"><span>Active</span></p>
+    <p class="success"><span>Active</span></p>
+  </section>
+
+  <section class="button primary">
+    <p class="primary"><span>Primary</span></p>
+    <p class="error"><span>Error</span></p>
+    <p class="success"><span>Success</span></p>
+  </section>
+
+  <section class="button primary hover">
+    <p class="primary"><span>Hover</span></p>
+    <p class="error"><span>Hover</span></p>
+    <p class="success"><span>Hover</span></p>
+  </section>
+
+  <section class="button primary active">
+    <p class="primary"><span>Active</span></p>
+    <p class="error"><span>Active</span></p>
+    <p class="success"><span>Active</span></p>
+  </section>
+</section>
+
+<section class="light">
+  <div class="dim"></div>
+</section>
+
+<section class="dark"></section>
+
+<section class="dark">
+  <div class="dim"></div>
+</section>
+
+
+<script type="module">
+  import {normal as blendColors} from './node_modules/color-blend/dist/index.mjs';
+  import {getComputedColor, getContrast, hslToRgb, luminance} from './ColorUtil.js';
+
+  const testContent = document.querySelector('.light').innerHTML;
+  document.querySelector('.light .dim').innerHTML = testContent;
+  document.querySelector('.dark').innerHTML = testContent;
+  document.querySelector('.dark .dim').innerHTML = testContent;
+
+  function calculateContrast(el) {
+    let curEl = el;
+    const colorStack = [];
+    do {
+      let color = getComputedColor(curEl, curEl.nodeName === 'SPAN' ? 'color' : 'background-color');
+      if (curEl === document.documentElement && color.a === 0) {
+        // Assuming the default white background (user-agent style sheet)
+        color = {r:255,g:255,b:255,a:1};
+      }
+      colorStack.unshift(color);
+
+      curEl = curEl.parentNode;
+    } while (curEl !== document);
+
+    let fg = colorStack.reduce((acc, cur, curIndex, array) => {
+      return blendColors(acc, cur);
+    });
+
+    // Potential hover/active state
+    let stateOverlayColor = getComputedColor(el, 'background-color', '::before');
+    if (stateOverlayColor.a > 0) {
+      stateOverlayColor.a = parseFloat(getComputedStyle(el, '::before').getPropertyValue('opacity'));
+    } else {
+      stateOverlayColor = undefined;
+    }
+
+    if (stateOverlayColor) {
+      fg = blendColors(fg, stateOverlayColor);
+    }
+
+    colorStack.pop();
+
+    let bg = colorStack.reduce((acc, cur, curIndex, array) => {
+      return blendColors(acc, cur);
+    });
+
+    if (stateOverlayColor) {
+      bg = blendColors(bg, stateOverlayColor);
+    }
+
+    const contrastBg = getContrast(bg, fg);
+    const levelBg = contrastBg >= 7 ? 'aaa' : (contrastBg >= 4.5 ? 'aa' : (contrastBg >= 3 ? 'aa-bold' : undefined));
+
+    return {
+      bg: {value: contrastBg, level: levelBg},
+    };
+  }
+
+
+
+  window.updateContrastInfo = function() {
+    requestAnimationFrame(() => {
+      Array.from(document.querySelectorAll('span')).forEach(el => {
+        const contrast = calculateContrast(el);
+        if (contrast.bg.value.toFixed(2) < 4.5) {
+          el.classList.add('low-contrast');
+        }
+        el.innerHTML += ` ${contrast.bg.value.toFixed(2)}`;
+      });
+    });
+  }
+
+  window.updateContrastInfo();
+</script>
+
+</body>
+</html>
