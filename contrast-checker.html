@@ -9,51 +9,54 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color-scheme: light dark;
+
+    /* --_button-color-brightness-adjust: 1; */
   }
 
   .light {
-    --lumo-primary-text-color: hsl(217, 95%, 46%);
-    --lumo-primary-color: hsl(217, 95%, 48%);
-    --lumo-primary-color-50pct: hsla(217, 95%, 48%, 0.5);
-    --lumo-primary-color-10pct: hsla(217, 95%, 48%, 0.1);
+    --lumo-primary-text-color: hsl(214, 100%, 43%);
+    --lumo-primary-color: hsl(214, 100%, 48%);
+    --lumo-primary-color-50pct: hsla(214, 100%, 49%, 0.76);
+    --lumo-primary-color-10pct: hsla(214, 100%, 60%, 0.13);
 
-    --lumo-error-text-color: hsl(3, 81%, 43%);
-    --lumo-error-color: hsl(3, 81%, 47%);
-    --lumo-error-color-50pct: hsla(3, 91%, 47%, 0.5);
-    --lumo-error-color-10pct: hsla(3, 91%, 47%, 0.1);
+    --lumo-error-text-color: hsl(3, 89%, 42%);
+    --lumo-error-color: hsl(3, 85%, 48%);
+    --lumo-error-color-50pct: hsla(3, 85%, 49%, 0.5);
+    --lumo-error-color-10pct: hsla(3, 85%, 49%, 0.1);
 
-    --lumo-success-text-color: hsl(145, 79%, 26%);
-    --lumo-success-color: hsl(145, 70%, 28%);
-    --lumo-success-color-50pct: hsla(145, 90%, 38%, 0.5);
-    --lumo-success-color-10pct: hsla(145, 90%, 38%, 0.1);
+    --lumo-success-text-color: hsl(145, 85%, 25%);
+    --lumo-success-color: hsl(145, 72%, 30%);
+    --lumo-success-color-50pct: hsla(145, 72%, 31%, 0.5);
+    --lumo-success-color-10pct: hsla(145, 72%, 31%, 0.1);
 
     --lumo-shade-50pct: hsla(214, 45%, 20%, 0.52);
     --lumo-tertiary-text-color: var(--lumo-shade-50pct);
+
+    /* --_button-color-brightness-adjust: 0.99; */
   }
 
   .dark {
-    --lumo-primary-text-color: hsl(217, 100%, 77%);
-    --lumo-primary-color: hsl(217, 95%, 48%);
-    --lumo-primary-color-50pct: hsla(217, 100%, 68%, 0.5);
-    --lumo-primary-color-10pct: hsla(217, 100%, 68%, 0.16);
+    --lumo-primary-text-color: hsl(214, 90%, 77%);
+    --lumo-primary-color: hsl(214, 90%, 48%);
+    --lumo-primary-color-50pct: hsla(214, 90%, 70%, 0.69);
+    --lumo-primary-color-10pct: hsla(214, 90%, 55%, 0.13);
 
-    --lumo-error-text-color: hsl(3, 100%, 79%);
-    --lumo-error-color: hsl(3, 81%, 47%);
-    --lumo-error-color-50pct: hsla(3, 100%, 67%, 0.5);
-    --lumo-error-color-10pct: hsla(3, 100%, 67%, 0.17);
+    --lumo-error-text-color: hsl(3, 100%, 80%);
+    --lumo-error-color: hsl(3, 79%, 49%);
+    --lumo-error-color-50pct: hsla(3, 75%, 62%, 0.5);
+    --lumo-error-color-10pct: hsla(3, 75%, 62%, 0.14);
 
-    --lumo-success-text-color: hsl(145, 79%, 46%);
-    --lumo-success-color: hsl(145, 70%, 28%);
-    --lumo-success-color-50pct: hsla(145, 90%, 68%, 0.5);
-    --lumo-success-color-10pct: hsla(145, 90%, 68%, 0.12);
+    --lumo-success-text-color: hsl(145, 85%, 46%);
+    --lumo-success-color: hsl(145, 72%, 30%);
+    --lumo-success-color-50pct: hsla(145, 92%, 51%, 0.5);
+    --lumo-success-color-10pct: hsla(145, 92%, 51%, 0.1);
+
+    /* --_button-color-brightness-adjust: 1.02; */
   }
 
   .light,
   .dark,
   .dim {
-    display: flex;
-    flex-wrap: wrap;
-    flex: auto;
     background-color: var(--lumo-base-color);
     color: var(--lumo-body-text-color);
   }
@@ -66,20 +69,17 @@
     padding: 0.5rem;
   }
 
-  hr {
-    display: none;
-    width: 100%;
-    height: 1px;
-    border: 0;
-    background: var(--lumo-contrast-20pct);
-  }
-
   p {
-    margin: 1rem 0.5rem;
+    margin: 0;
   }
 
   .low-contrast {
     outline: 2px dashed red;
+    box-shadow: 0 0 0 2px white;
+  }
+
+  .text {
+    display: inline-block;
   }
 
   .secondary {
@@ -102,7 +102,8 @@
     color: var(--lumo-success-text-color);
   }
 
-  .badge p {
+  .badge {
+    display: inline-block;
     font-size: 0.9em;
     padding: 0.2em 0.4em;
     border-radius: 0.25rem;
@@ -111,32 +112,35 @@
     font-weight: 500;
   }
 
-  .badge .primary {
+  .badge.primary {
     background-color: var(--lumo-primary-color-10pct);
   }
 
-  .badge .error {
+  .badge.error {
     background-color: var(--lumo-error-color-10pct);
   }
 
-  .badge .success {
+  .badge.success {
     background-color: var(--lumo-success-color-10pct);
   }
 
-  .item p {
+  .item {
+    display: inline-block;
     padding: 0.5em 4em 0.5em 1em;
     border-radius: 0.25rem;
   }
 
-  .item .hover {
+  .item.hover {
     background-color: var(--lumo-primary-color-10pct);
   }
 
   .rte {
+    display: inline-block;
     background-color: var(--lumo-contrast-5pct);
   }
 
-  .rte .button {
+  .rte-button {
+    display: inline-block;
     padding: 0.75rem;
     border-radius: 0.25rem;
     font-weight: 600;
@@ -146,48 +150,54 @@
     color: var(--lumo-contrast-60pct);
   }
 
-  .rte .button.hover {
+  .rte-button.hover {
     background-color: var(--lumo-contrast-5pct);
     color: var(--lumo-contrast-80pct);
   }
 
-  .button p {
+  .button {
+    display: inline-block;
     padding: 0.5em 1em;
     border-radius: 0.25rem;
     font-weight: 600;
     background-color: var(--lumo-contrast-5pct);
     text-align: center;
     position: relative;
+    color: var(--lumo-primary-text-color);
+    cursor: default;
+    user-select: none;
   }
 
-  .button .primary {
+  .button.primary {
     color: var(--lumo-primary-text-color);
   }
 
-  .button .error {
+  .button.error {
     color: var(--lumo-error-text-color);
   }
 
-  .button .success {
+  .button.success {
     color: var(--lumo-success-text-color);
   }
 
-  .button.primary .primary {
+  .button.primary {
     color: var(--lumo-primary-contrast-color);
     background-color: var(--lumo-primary-color);
+    --_button-color-brightness-adjust: 0.98;
   }
 
-  .button.primary .error {
+  .button.primary.error {
     color: var(--lumo-error-contrast-color);
     background-color: var(--lumo-error-color);
   }
 
-  .button.primary .success {
+  .button.primary.success {
     color: var(--lumo-success-contrast-color);
     background-color: var(--lumo-success-color);
   }
 
-  .button.hover p span::before,
+  /* Current Lumo */
+  /* .button.hover p span::before,
   .button.active p span::before {
     content: "";
     position: absolute;
@@ -207,89 +217,165 @@
 
   .button.primary.active p span::before {
     background: var(--lumo-contrast-20pct);
+  } */
+
+  .button:hover::before,
+  .button.hover::before,
+  .button:active::before,
+  .button.active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 0.25rem;
+    pointer-events: none;
+    background-color: currentColor;
+    opacity: 0.02;
   }
+
+  .button:active::before,
+  .button.active::before {
+    opacity: 0.05;
+  }
+
+  .button.primary:hover::before,
+  .button.primary.hover::before {
+    opacity: 0.05;
+    background-color: black;
+  }
+
+  .button.primary:active::before,
+  .button.primary.active::before {
+    opacity: 0.1;
+    background-color: black;
+  }
+
+  .button.hover span,
+  .button:hover span {
+    /* filter: brightness(var(--_button-color-brightness-adjust)); */
+  }
+
+  .button.active span,
+  .button:active span {
+    /* filter: brightness(calc(var(--_button-color-brightness-adjust) * var(--_button-color-brightness-adjust))); */
+  }
+
+  .button.tertiary {
+    background: transparent;
+  }
+
+  /* .button-badge {
+    position: absolute;
+    top: -0.5em;
+    right: -0.5em;
+    background: red;
+    color: white;
+    border-radius: 2em;
+    width: 1.5em;
+    height: 1.5em;
+    font-size: 0.8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  } */
+
+  .focus-outline {
+    display: inline-block;
+    color: var(--lumo-primary-color-50pct);
+    border: 2px solid;
+    border-radius: 0.375rem;
+    padding: 0.5em;
+  }
+
+  /* .input-bg {
+    display: inline-block;
+    color: var(--lumo-contrast-10pct);
+    background-color: currentColor;
+    border-radius: 0.25rem;
+    padding: 0.5em;
+  } */
 </style>
 </head>
 <body>
-<section class="light">
-  <section class="text">
-    <p class="body"><span>Body</span></p>
-    <p class="secondary"><span>Secondary</span></p>
-    <p class="tertiary"><span>Tertiary</span></p>
-    <p class="primary"><span>Text</span></p>
-    <p class="error"><span>Text</span></p>
-    <p class="success"><span>Text</span></p>
+<div class="light">
+  <section>
+    <p class="text body"><span>Body</span></p>
+    <p class="text secondary"><span>Secondary</span></p>
+    <p class="text tertiary"><span class="level-a">Tertiary</span></p>
+    <p class="text primary"><span>Text</span></p>
+    <p class="text error"><span>Text</span></p>
+    <p class="text success"><span>Text</span></p>
+
+    <p class="badge primary"><span>Badge</span></p>
+    <p class="badge error"><span>Badge</span></p>
+    <p class="badge success"><span>Badge</span></p>
+
+    <p class="item"><span>Item</span></p>
+    <p class="item hover"><span>Item</span></p>
+
+    <div class="rte">
+      <p class="rte-button"><span class="level-a">B</span></p>
+      <p class="rte-button hover"><span>B</span></p>
+    </div>
+
+    <p class="focus-outline"><span class="level-a"></span></p>
+    <!-- <p class="input-bg"><span class="level-a"></span></p> -->
   </section>
 
-  <section class="badge">
-    <p class="primary"><span>Badge</span></p>
-    <p class="error"><span>Badge</span></p>
-    <p class="success"><span>Badge</span></p>
+
+  <section>
+    <p class="button tertiary"><span>Button <b class="button-badge"></b></span></p>
+    <p class="button tertiary hover"><span>Hover <b class="button-badge"></b></span></p>
+    <p class="button tertiary active"><span>Active</span></p>
+    <p class="button tertiary error"><span>Button</span></p>
+    <p class="button tertiary error hover"><span>Hover</span></p>
+    <p class="button tertiary error active"><span>Active</span></p>
+    <p class="button tertiary success"><span>Button</span></p>
+    <p class="button tertiary success hover"><span>Hover</span></p>
+    <p class="button tertiary success active"><span>Active</span></p>
   </section>
 
-  <div>
-    <section class="item">
-      <p><span>Item</span></p>
-      <p class="hover"><span>Item</span></p>
-    </section>
-
-    <section class="rte">
-      <p class="button"><span>B</span></p>
-      <p class="button hover"><span>B</span></p>
-    </section>
-  </div>
-
-  <section class="button">
-    <p class="primary"><span>Button</span></p>
-    <p class="error"><span>Button</span></p>
-    <p class="success"><span>Button</span></p>
+  <section>
+    <p class="button"><span>Button</span></p>
+    <p class="button hover"><span>Hover</span></p>
+    <p class="button active"><span>Active</span></p>
+    <p class="button error"><span>Button</span></p>
+    <p class="button error hover"><span>Hover</span></p>
+    <p class="button error active"><span>Active</span></p>
+    <p class="button success"><span>Button</span></p>
+    <p class="button success hover"><span>Hover</span></p>
+    <p class="button success active"><span>Active</span></p>
   </section>
 
-  <section class="button hover">
-    <p class="primary"><span>Hover</span></p>
-    <p class="error"><span>Hover</span></p>
-    <p class="success"><span>Hover</span></p>
+  <section>
+    <p class="button primary"><span>Primary</span></p>
+    <p class="button primary hover"><span>Hover</span></p>
+    <p class="button primary active"><span>Active</span></p>
+    <p class="button primary error"><span>Error</span></p>
+    <p class="button primary error hover"><span>Hover</span></p>
+    <p class="button primary error active"><span>Active</span></p>
+    <p class="button primary success"><span>Success</span></p>
+    <p class="button primary success hover"><span>Hover</span></p>
+    <p class="button primary success active"><span>Active</span></p>
   </section>
+</div>
 
-  <section class="button active">
-    <p class="primary"><span>Active</span></p>
-    <p class="error"><span>Active</span></p>
-    <p class="success"><span>Active</span></p>
-  </section>
-
-  <section class="button primary">
-    <p class="primary"><span>Primary</span></p>
-    <p class="error"><span>Error</span></p>
-    <p class="success"><span>Success</span></p>
-  </section>
-
-  <section class="button primary hover">
-    <p class="primary"><span>Hover</span></p>
-    <p class="error"><span>Hover</span></p>
-    <p class="success"><span>Hover</span></p>
-  </section>
-
-  <section class="button primary active">
-    <p class="primary"><span>Active</span></p>
-    <p class="error"><span>Active</span></p>
-    <p class="success"><span>Active</span></p>
-  </section>
-</section>
-
-<section class="light">
+<div class="light">
   <div class="dim"></div>
-</section>
+</div>
 
-<section class="dark"></section>
+<div class="dark"></div>
 
-<section class="dark">
+<div class="dark">
   <div class="dim"></div>
-</section>
+</div>
 
 
 <script type="module">
   import {normal as blendColors} from './node_modules/color-blend/dist/index.mjs';
-  import {getComputedColor, getContrast, hslToRgb, luminance} from './ColorUtil.js';
+  import {getComputedColor, getContrast, rgbToHsl, hslToRgb, luminance} from './ColorUtil.js';
 
   const testContent = document.querySelector('.light').innerHTML;
   document.querySelector('.light .dim').innerHTML = testContent;
@@ -300,7 +386,7 @@
     let curEl = el;
     const colorStack = [];
     do {
-      let color = getComputedColor(curEl, curEl.nodeName === 'SPAN' ? 'color' : 'background-color');
+      let color = getComputedColor(curEl, curEl === el ? 'color' : 'background-color');
       if (curEl === document.documentElement && color.a === 0) {
         // Assuming the default white background (user-agent style sheet)
         color = {r:255,g:255,b:255,a:1};
@@ -314,25 +400,39 @@
       return blendColors(acc, cur);
     });
 
-    // Potential hover/active state
-    let stateOverlayColor = getComputedColor(el, 'background-color', '::before');
-    if (stateOverlayColor.a > 0) {
-      stateOverlayColor.a = parseFloat(getComputedStyle(el, '::before').getPropertyValue('opacity'));
-    } else {
-      stateOverlayColor = undefined;
-    }
-
-    if (stateOverlayColor) {
-      fg = blendColors(fg, stateOverlayColor);
-    }
-
     colorStack.pop();
 
     let bg = colorStack.reduce((acc, cur, curIndex, array) => {
       return blendColors(acc, cur);
     });
 
-    if (stateOverlayColor) {
+    // With current Lumo button state implementation
+    // // Potential hover/active state
+    // let stateOverlayColor = getComputedColor(el, 'background-color', '::before');
+    // if (stateOverlayColor.a > 0) {
+    //   stateOverlayColor.a = parseFloat(getComputedStyle(el, '::before').getPropertyValue('opacity'));
+    // } else {
+    //   stateOverlayColor = undefined;
+    // }
+    //
+    // if (stateOverlayColor) {
+    //   fg = blendColors(fg, stateOverlayColor);
+    //   bg = blendColors(bg, stateOverlayColor);
+    // }
+
+    // Potential hover/active state
+    if (el.closest('.button')) {
+
+      // if (el.closest('.button:is(.hover, .active)')) {
+      //   const fgHsl = rgbToHsl(fg);
+      //   fgHsl.l = Math.min(parseFloat(getComputedStyle(el).getPropertyValue('filter').split('(')[1]) * fgHsl.l, 100);
+      //   fg = hslToRgb(fgHsl);
+      // }
+
+      // Background overlay
+      const stateOverlayColor = getComputedColor(el.closest('.button'), 'background-color', '::before');
+      stateOverlayColor.a *= parseFloat(getComputedStyle(el.closest('.button'), '::before').getPropertyValue('opacity'));
+      fg = blendColors(fg, stateOverlayColor);
       bg = blendColors(bg, stateOverlayColor);
     }
 
@@ -344,21 +444,17 @@
     };
   }
 
-
-
-  window.updateContrastInfo = function() {
-    requestAnimationFrame(() => {
-      Array.from(document.querySelectorAll('span')).forEach(el => {
-        const contrast = calculateContrast(el);
-        if (contrast.bg.value.toFixed(2) < 4.5) {
-          el.classList.add('low-contrast');
-        }
-        el.innerHTML += ` ${contrast.bg.value.toFixed(2)}`;
-      });
+  requestAnimationFrame(() => {
+    Array.from(document.querySelectorAll('span')).forEach(el => {
+      const contrast = calculateContrast(el);
+      if (contrast.bg.value.toFixed(2) < 4.5 && !el.classList.contains('level-a')) {
+        el.classList.add('low-contrast');
+      } else if (contrast.bg.value.toFixed(2) < 3) {
+        el.classList.add('low-contrast');
+      }
+      el.innerHTML += ` ${contrast.bg.value.toFixed(2)}`;
     });
-  }
-
-  window.updateContrastInfo();
+  });
 </script>
 
 </body>
