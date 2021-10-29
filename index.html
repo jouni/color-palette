@@ -1,517 +1,463 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-
+<!doctype html>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Lumo color palette generator and contrast checker</title>
-  <link rel="stylesheet" href="current-lumo.css">
-  <link rel="stylesheet" href="light-palette.css">
-  <style>
-    html {
-      color: var(--body-text-color);
-      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    * {
-      --heading-text-color: var(--gray-900);
-      --body-text-color: var(--gray-800);
-      --secondary-text-color: var(--gray-600);
-      --tertiary-text-color: var(--gray-500);
-      --disabled-text-color: var(--gray-400);
-      --link-text-color: var(--blue-600);
-
-      --button-bg: var(--blue-500);
-    }
-
-    .dark * {
-      --button-bg: var(--blue-400);
-    }
-
-    body {
-      margin: 0;
-    }
-
-    .row {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .light:not(.palette),
-    .dark:not(.palette) {
-      flex: auto;
-      background-color: var(--surface-1);
-      color: var(--body-text-color);
-    }
-
-    .dark:not(.palette) {
-      background-color: var(--surface-3);
-    }
-
-    .palettes {
-      flex: auto;
-      cursor: default;
-      overflow: hidden;
-    }
-
-    .palettes h3 {
-      margin: 0;
-      text-transform: uppercase;
-      font-size: 0.7rem;
-      margin: 1.5rem 1rem 0.5rem;
-      opacity: 0.8;
-      font-weight: 500;
-      letter-spacing: 0.05em;
-    }
-
-    .palette {
-      display: flex;
-      padding: 0 1rem;
-    }
-
-    .swatch {
-      flex: auto;
-      flex-basis: 0;
-      min-width: 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .swatch .color {
-      display: flex;
-      padding: 0.5em 0.8em;
-      font-size: 0.6em;
-      font-weight: 600;
-      height: 2rem;
-      box-sizing: border-box;
-    }
-
-    .swatch .contrast {
-      display: flex;
-      min-width: 0;
-      align-items: center;
-      font-size: 0.6em;
-    }
-
-    .swatch .contrast::before {
-      content: "";
-      flex: none;
-      width: 0.6em;
-      height: 0.6em;
-      border-radius: 50%;
-      margin-inline-end: 0.4em;
-    }
-
-    .swatch .contrast.white::before {
-      background: white;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.2);
-    }
-
-    .swatch .contrast.black::before {
-      background: black;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
-    }
-
-    .swatch .contrast[level]::after {
-      content: attr(level);
-      text-transform: uppercase;
-      background-color: green;
-      color: white;
-      display: inline-block;
-      padding: 0.1em 0.2em;
-      border-radius: 0.2em;
-      font-size: 0.65em;
-      font-weight: 500;
-      margin-inline-start: 0.2em;
-    }
-
-    .swatch .contrast[level="aa-bold"]::after {
-      content: "AA (B)";
-    }
-
-    .swatch:not(:hover) .contrast[level]::after {
-      opacity: 0;
-    }
-
-    .swatch:not(:hover) .contrast:not([level]) {
-      opacity: 0;
-    }
-
-    .swatch:not(:hover) .contrast[level="aa-bold"] {
-      opacity: 0.7;
-    }
-
-    .swatch .contrast[level="aaa"] {
-      font-weight: 500;
-    }
-
-    .palette:hover {
-      background-clip: content-box;
-      background-size: 20px 10px;
-      background-repeat: repeat-x;
-      background-origin: content-box;
-      background-image: linear-gradient(
-        to right,
-        rgba(255,255,255,.2),
-        rgba(255,255,255,.2) 50%,
-        rgba(0,0,0,.2) 50%,
-        rgba(0,0,0,.2)
-      );
-    }
-
-    .testing {
-      padding: 2rem;
-    }
-
-    .button {
-      color: var(--link-text-color);
-      background-color: var(--blue-50);
-      padding: 0.5em 1em;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin: 1em 0.25em;
-      border-radius: 0.25em;
-      line-height: 1;
-      font-weight: 500;
-      box-sizing: border-box;
-      height: 2.25rem;
-    }
-
-    .button.danger {
-      color: var(--red-600);
-      background-color: var(--red-50);
-    }
-
-    .button.success {
-      color: var(--green-600);
-      background-color: var(--green-50);
-    }
-
-    .button.primary {
-      color: white;
-      background-color: var(--button-bg);
-      min-width: 5.5em;
-    }
-
-    .button.danger.primary {
-      --button-bg: var(--red-500);
-    }
-
-    .dark .button.danger.primary {
-      --button-bg: var(--red-400);
-    }
-
-    .button.success.primary {
-      --button-bg: var(--green-500);
-    }
-
-    .dark .button.success.primary {
-      --button-bg: var(--green-400);
-    }
-
-    .link {
-      color: var(--link-text-color);
-    }
-
-    .text-input {
-      height: 2.25rem;
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25em 0.5em;
-      box-sizing: border-box;
-      background-color: var(--gray-100);
-      color: var(--body-text-color);
-      font-weight: 500;
-      min-width: 10em;
-      border-radius: 0.25rem;
-      border: 1px solid var(--gray-50);
-    }
-
-    .text-input.invalid {
-      background-color: var(--red-50);
-      border-color: var(--red-50);
-      color: var(--red-900);
-    }
-
-    .text-input.valid {
-      /* background-color: var(--green-100); */
-      border-color: var(--green-200);
-      /* color: var(--green-900); */
-    }
-
-    :focus,
-    .focus {
-      outline: 0;
-      box-shadow: 0 0 0 2px var(--surface-1), 0 0 0 4px var(--blue-200);
-    }
-
-    .heading-text {
-      color: var(--heading-text-color);
-      font-weight: 600;
-      font-size: 1.125rem;
-    }
-
-    .body-text {
-      color: var(--body-text-color);
-    }
-
-    .secondary-text {
-      color: var(--secondary-text-color);
-      font-size: 0.9rem;
-    }
-
-    .tertiary-text {
-      color: var(--tertiary-text-color);
-      font-size: 0.85rem;
-    }
-
-    .row .palettes {
-      position: relative;
-    }
-
-    .current-lumo {
-      position: absolute;
-      z-index: 100;
-      width: 100%;
-      background-color: var(--lumo-base-color);
-    }
-
-    .show-current-lumo:not(:checked) ~ .row .current-lumo {
-      display: none;
-    }
-
-    .show-best-case:checked ~ .row .light:not(.palette) {
-      background-color: var(--surface-3);
-    }
-
-    .show-best-case:checked ~ .row .dark:not(.palette) {
-      background-color: var(--surface-1);
-    }
-
-    input.toggle-btn {
-      position: absolute;
-      opacity: 0;
-    }
-
-    label.toggle-btn {
-      display: inline-flex;
-      padding: 0.4em 0.5em;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 0.25em;
-      margin: 0.5em;
-      font-size: 0.7em;
-    }
-
-    input.toggle-btn:checked + label.toggle-btn {
-      background-color: #333;
-      color: #fff;
-      border-color: transparent;
-    }
-
-    input.toggle-btn:focus + label.toggle-btn {
-      box-shadow: 0 0 0 3px lightblue;
-    }
-  </style>
-  <script type="module">
-    import {normal as blendColors} from './node_modules/color-blend/dist/index.mjs';
-    import {getComputedColor, getContrast, hslToRgb, luminance} from './ColorUtil.js';
-
-    function renderPalette(palette) {
-      palette.values = palette.values || [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-      return `
-      <h3>${palette.name}</h3>
-      <section class="palette ${palette.name}${palette.dark ? ' dark': ''}">
-        ${palette.values.map(val => `
-          <div class="swatch swatch-${palette.name}-${val}">
-            <span class="color" style="background-color: var(--${palette.name}-${val});">${val}</span>
-          </div>`
-        ).join('')}
-      </section>
-      `;
-    }
-
-    function appendPalette(paletteConf) {
-      document.querySelector(`.light .palettes`).innerHTML += renderPalette(paletteConf);
-    }
-
-    function calculateContrast(el) {
-      let curEl = el;
-      const colorStack = [];
-      do {
-        let color = getComputedColor(curEl);
-        if (curEl === document.documentElement && color.a === 0) {
-          // Assuming the default white background (user-agent style sheet)
-          color = {r:255,g:255,b:255,a:1};
-        }
-        colorStack.unshift(color);
-      } while ((curEl = curEl.parentNode) !== document);
-
-      const fg = colorStack.reduce((acc, cur, curIndex, array) => {
-        return blendColors(acc, cur);
-      });
-
-      colorStack.pop();
-
-      const bg = colorStack.reduce((acc, cur, curIndex, array) => {
-        return blendColors(acc, cur);
-      });
-
-      const contrastBg = getContrast(bg, fg);
-      const contrastWhite = getContrast({r:255,g:255,b:255,a:1}, fg);
-      const contrastBlack = getContrast({r:0,g:0,b:0,a:1}, fg);
-      const levelBg = contrastBg >= 7 ? 'aaa' : (contrastBg >= 4.5 ? 'aa' : (contrastBg >= 3 ? 'aa-bold' : undefined));
-      const levelWhite = contrastWhite >= 7 ? 'aaa' : (contrastWhite >= 4.5 ? 'aa' : (contrastWhite >= 3 ? 'aa-bold' : undefined));
-      const levelBlack = contrastBlack >= 7 ? 'aaa' : (contrastBlack >= 4.5 ? 'aa' : (contrastBlack >= 3 ? 'aa-bold' : undefined));
-
-      el.style.setProperty('color', 'black');
-      if (contrastWhite >= 4.5) {
-        el.style.setProperty('color', 'white');
-      }
-
-      return {
-        bg: {value: contrastBg, level: levelBg},
-        white: {value: contrastWhite, level: levelWhite},
-        black: {value: contrastBlack, level: levelBlack}
-      };
-    }
-
-    appendPalette({name: 'gray'});
-
-    let ligthPalettes = document.querySelector('.light');
-    let darkPalettes = ligthPalettes.cloneNode(true);
-    darkPalettes.className = 'dark';
-    ligthPalettes.parentNode.appendChild(darkPalettes);
-
-    window.updateContrastInfo = function() {
-      requestAnimationFrame(() => {
-        Array.from(document.querySelectorAll('.swatch')).forEach(swatch => {
-          // Cleanup existing info
-          Array.from(swatch.querySelectorAll('.contrast')).forEach(contrast => {
-            swatch.removeChild(contrast);
-          });
-
-          // Add contrast values
-          const color = swatch.querySelector('.color');
-          if (color) {
-            const contrast = calculateContrast(color);
-            swatch.innerHTML += `
-            <span class="contrast bg" ${contrast.bg.level ? `level="${contrast.bg.level}"` : ''} title="Contrast with background">${contrast.bg.value.toFixed(2)}</span>
-            <span class="contrast white" ${contrast.white.level ? `level="${contrast.white.level}"` : ''} title="Contrast with white">${contrast.white.value.toFixed(2)}</span>
-            <span class="contrast black" ${contrast.black.level ? `level="${contrast.black.level}"` : ''} title="Contrast with black">${contrast.black.value.toFixed(2)}</span>
-            `;
-          }
-        });
-      });
-    }
-
-    window.updateContrastInfo();
-  </script>
+<link rel="stylesheet" href="lumo.css">
+
+<style>
+  html {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .light,
+  .dark,
+  .dim {
+    background-color: var(--lumo-base-color);
+    color: var(--lumo-body-text-color);
+  }
+
+  .dim {
+    background-color: var(--lumo-contrast-5pct);
+  }
+
+  section {
+    padding: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .low-contrast {
+    outline: 2px dashed red;
+    box-shadow: 0 0 0 2px white;
+  }
+
+  .text {
+    display: inline-block;
+  }
+
+  .secondary {
+    color: var(--lumo-secondary-text-color);
+  }
+
+  .tertiary {
+    color: var(--lumo-tertiary-text-color);
+  }
+
+  .primary {
+    color: var(--lumo-primary-text-color);
+  }
+
+  .error {
+    color: var(--lumo-error-text-color);
+  }
+
+  .success {
+    color: var(--lumo-success-text-color);
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.9em;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25rem;
+    width: min-content;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .badge.primary {
+    background-color: var(--lumo-primary-color-10pct);
+  }
+
+  .badge.error {
+    background-color: var(--lumo-error-color-10pct);
+  }
+
+  .badge.success {
+    background-color: var(--lumo-success-color-10pct);
+  }
+
+  .item {
+    display: inline-block;
+    padding: 0.5em 4em 0.5em 1em;
+    border-radius: 0.25rem;
+  }
+
+  .item.hover {
+    background-color: var(--lumo-primary-color-10pct);
+  }
+
+  .rte {
+    display: inline-block;
+    background-color: var(--lumo-contrast-5pct);
+  }
+
+  .rte-button {
+    display: inline-block;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    margin: 0;
+    width: min-content;
+    white-space: nowrap;
+    color: var(--lumo-contrast-60pct);
+  }
+
+  .rte-button.hover {
+    background-color: var(--lumo-contrast-5pct);
+    color: var(--lumo-contrast-80pct);
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.5em 1em;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    background-color: var(--lumo-contrast-5pct);
+    text-align: center;
+    position: relative;
+    color: var(--lumo-primary-text-color);
+    cursor: default;
+    user-select: none;
+  }
+
+  .button.primary {
+    color: var(--lumo-primary-text-color);
+  }
+
+  .button.error {
+    color: var(--lumo-error-text-color);
+  }
+
+  .button.success {
+    color: var(--lumo-success-text-color);
+  }
+
+  .button.primary {
+    color: var(--lumo-primary-contrast-color);
+    background-color: var(--lumo-primary-color);
+    --_button-color-brightness-adjust: 0.98;
+  }
+
+  .button.primary.error {
+    color: var(--lumo-error-contrast-color);
+    background-color: var(--lumo-error-color);
+  }
+
+  .button.primary.success {
+    color: var(--lumo-success-contrast-color);
+    background-color: var(--lumo-success-color);
+  }
+
+  /* Lumo prior to V22 */
+  /* .button.hover span::before,
+  .button.active span::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: currentColor;
+    opacity: 0.05;
+    border-radius: 0.25rem;
+  }
+
+  .button.primary.hover span::before,
+  .button.active span::before {
+    opacity: 0.1;
+  }
+
+  .button.primary.active span::before {
+    background: var(--lumo-contrast-20pct);
+  } */
+
+  .button:hover::before,
+  .button.hover::before,
+  .button:active::before,
+  .button.active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 0.25rem;
+    pointer-events: none;
+    background-color: currentColor;
+    opacity: 0.02;
+  }
+
+  .button:active::before,
+  .button.active::before {
+    opacity: 0.05;
+  }
+
+  .button.primary:hover::before,
+  .button.primary.hover::before {
+    opacity: 0.05;
+    background-color: black;
+  }
+
+  .button.primary:active::before,
+  .button.primary.active::before {
+    opacity: 0.1;
+    background-color: black;
+  }
+
+  .button.tertiary {
+    background: transparent;
+  }
+
+  .outline {
+    display: inline-block;
+    color: var(--lumo-primary-color-50pct);
+    border: 2px solid;
+    border-radius: 0.375rem;
+    padding: 0.5em;
+  }
+
+  .outline.error {
+    color: var(--lumo-error-color-50pct);
+  }
+
+  .outline.success {
+    color: var(--lumo-success-color-50pct);
+  }
+
+  .input-bg {
+    display: inline-block;
+    color: var(--lumo-body-text-color);
+    background-color: var(--lumo-contrast-10pct);
+    border-radius: 0.25rem;
+    padding: 0.5em;
+    font-weight: 500;
+  }
+
+
+  body {
+    display: flex;
+    margin: 0;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .css-text {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 2rem);
+    position: sticky;
+    top: 0;
+    font-family: monospace;
+    font-size: 1rem;
+  }
+
+  .css-text textarea {
+    flex: auto;
+    font: inherit;
+  }
+
+  .contrast-value {
+    font-style: normal;
+    margin-inline-start: .2em;
+  }
+</style>
+<style id="css"></style>
 </head>
-
 <body>
 
-  <input id="show-current-lumo" type="checkbox" class="show-current-lumo toggle-btn">
-  <label for="show-current-lumo" class="toggle-btn">Show current Lumo</label>
+<label class="css-text">
+html {
+<textarea id="css-text"></textarea>
+}
+</label>
 
-  <input id="show-best-case" type="checkbox" class="show-best-case toggle-btn">
-  <label for="show-best-case" class="toggle-btn" onclick="window.updateContrastInfo()">Min/max contrast</label>
+<div>
+<div class="light">
+  <section>
+    <p class="text body"><span>Body</span></p>
+    <p class="text secondary"><span>Secondary</span></p>
+    <p class="text tertiary"><span class="level-a">Tertiary</span></p>
+    <p class="text primary"><span>Text</span></p>
+    <p class="text error"><span>Text</span></p>
+    <p class="text success"><span>Text</span></p>
 
-  <div class="row">
-    <div class="light">
-      <section class="palettes">
-        <div class="current-lumo">
-          <h3>Contrast</h3>
-          <section class="palette">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-5pct);">5%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-10pct);">10%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-20pct);">20%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-30pct);">30%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-40pct);">40%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-50pct);">50%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-60pct);">60%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-70pct);">70%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-80pct);">80%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast-90pct);">90%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-contrast);">100%</span></div>
-          </section>
-          <h3>Primary</h3>
-          <section class="palette">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color-10pct);">10%</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color-50pct);">50%</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-color);">100%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-primary-text-color);">Text</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-          </section>
-          <h3>Error</h3>
-          <section class="palette">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color-10pct);">10%</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color-50pct);">50%</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-color);">100%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-error-text-color);">Text</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-          </section>
-          <h3>Success</h3>
-          <section class="palette">
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color-10pct);">10%</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color-50pct);">50%</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-color);">100%</span></div>
-            <div class="swatch"><span class="color" style="background-color: var(--lumo-success-text-color);">Text</span></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-            <div class="swatch"></div>
-          </section>
-        </div>
-      </section>
+    <p class="badge primary"><span>Badge</span></p>
+    <p class="badge error"><span>Badge</span></p>
+    <p class="badge success"><span>Badge</span></p>
 
-      <section class="testing">
-        <div class="heading-text">Heading text</div>
-        <!-- <div class="body-text">Body text</div> -->
-        <div class="secondary-text">Secondary text</div>
-        <!-- <div class="tertiary-text">Tertiary text</div> -->
+    <p class="item"><span>Item</span></p>
+    <p class="item hover"><span>Item</span></p>
 
-        <p class="body-text">Body text, lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore</p>
-        <div class="link">Link text</div>
-
-        <div class="button" tabindex="0">Button</div>
-        <div class="button primary" tabindex="0">Button</div>
-        <div class="text-input" tabindex="0">Text input</div>
-        <br>
-
-        <div class="button focus" tabindex="0">Button</div>
-        <div class="button primary focus" tabindex="0">Button</div>
-        <div class="text-input focus" tabindex="0">Text input</div>
-        <br>
-
-        <div class="button danger" tabindex="0">Button</div>
-        <div class="button primary danger" tabindex="0">Button</div>
-        <div class="text-input invalid" tabindex="0">Text input</div>
-        <br>
-
-        <div class="button success" tabindex="0">Button</div>
-        <div class="button primary success" tabindex="0">Button</div>
-        <div class="text-input valid" tabindex="0">Text input</div>
-      </section>
+    <div class="rte">
+      <p class="rte-button"><span class="level-a">B</span></p>
+      <p class="rte-button hover"><span>B</span></p>
     </div>
-  </div>
+
+    <p class="outline"><span class="level-a">Focus outline</span></p>
+    <p class="outline error"><span class="level-a">Error outline</span></p>
+    <p class="outline success"><span class="level-a">Success outline</span></p>
+    <p class="input-bg"><span class="level-a">Text input</span></p>
+  </section>
 
 
+  <section>
+    <p class="button tertiary"><span>Button</span></p>
+    <p class="button tertiary hover"><span>Hover</span></p>
+    <p class="button tertiary active"><span>Active</span></p>
+    <p class="button tertiary error"><span>Button</span></p>
+    <p class="button tertiary error hover"><span>Hover</span></p>
+    <p class="button tertiary error active"><span>Active</span></p>
+    <p class="button tertiary success"><span>Button</span></p>
+    <p class="button tertiary success hover"><span>Hover</span></p>
+    <p class="button tertiary success active"><span>Active</span></p>
+  </section>
+
+  <section>
+    <p class="button"><span>Button</span></p>
+    <p class="button hover"><span>Hover</span></p>
+    <p class="button active"><span>Active</span></p>
+    <p class="button error"><span>Button</span></p>
+    <p class="button error hover"><span>Hover</span></p>
+    <p class="button error active"><span>Active</span></p>
+    <p class="button success"><span>Button</span></p>
+    <p class="button success hover"><span>Hover</span></p>
+    <p class="button success active"><span>Active</span></p>
+  </section>
+
+  <section>
+    <p class="button primary"><span>Primary</span></p>
+    <p class="button primary hover"><span>Hover</span></p>
+    <p class="button primary active"><span>Active</span></p>
+    <p class="button primary error"><span>Error</span></p>
+    <p class="button primary error hover"><span>Hover</span></p>
+    <p class="button primary error active"><span>Active</span></p>
+    <p class="button primary success"><span>Success</span></p>
+    <p class="button primary success hover"><span>Hover</span></p>
+    <p class="button primary success active"><span>Active</span></p>
+  </section>
+</div>
+
+<div class="light">
+  <div class="dim"></div>
+</div>
+
+<div class="dark"></div>
+
+<div class="dark">
+  <div class="dim"></div>
+</div>
+
+</div>
+
+
+<script type="module">
+  import {normal as blendColors} from './node_modules/color-blend/dist/index.mjs';
+  import {getComputedColor, getContrast, rgbToHsl, hslToRgb, luminance} from './ColorUtil.js';
+
+  const testContent = document.querySelector('.light').innerHTML;
+  document.querySelector('.light .dim').innerHTML = testContent;
+  document.querySelector('.dark').innerHTML = testContent;
+  document.querySelector('.dark .dim').innerHTML = testContent;
+
+  function calculateContrast(el) {
+    let curEl = el;
+    const colorStack = [];
+    do {
+      let color = getComputedColor(curEl, curEl === el ? 'color' : 'background-color');
+      if (curEl === document.documentElement && color.a === 0) {
+        // Assuming the default white background (user-agent style sheet)
+        color = {r:255,g:255,b:255,a:1};
+      }
+      colorStack.unshift(color);
+
+      curEl = curEl.parentNode;
+    } while (curEl !== document);
+
+    let fg = colorStack.reduce((acc, cur, curIndex, array) => {
+      return blendColors(acc, cur);
+    });
+
+    colorStack.pop();
+
+    let bg = colorStack.reduce((acc, cur, curIndex, array) => {
+      return blendColors(acc, cur);
+    });
+
+    // Lumo button state implementation prior to V22
+    // // Potential hover/active state
+    // let stateOverlayColor = getComputedColor(el, 'background-color', '::before');
+    // if (stateOverlayColor.a > 0) {
+    //   stateOverlayColor.a = parseFloat(getComputedStyle(el, '::before').getPropertyValue('opacity'));
+    // } else {
+    //   stateOverlayColor = undefined;
+    // }
+    //
+    // if (stateOverlayColor) {
+    //   fg = blendColors(fg, stateOverlayColor);
+    //   bg = blendColors(bg, stateOverlayColor);
+    // }
+
+    // Potential hover/active state
+    if (el.closest('.button')) {
+
+      // if (el.closest('.button:is(.hover, .active)')) {
+      //   const fgHsl = rgbToHsl(fg);
+      //   fgHsl.l = Math.min(parseFloat(getComputedStyle(el).getPropertyValue('filter').split('(')[1]) * fgHsl.l, 100);
+      //   fg = hslToRgb(fgHsl);
+      // }
+
+      // Background overlay
+      const stateOverlayColor = getComputedColor(el.closest('.button'), 'background-color', '::before');
+      stateOverlayColor.a *= parseFloat(getComputedStyle(el.closest('.button'), '::before').getPropertyValue('opacity'));
+      fg = blendColors(fg, stateOverlayColor);
+      bg = blendColors(bg, stateOverlayColor);
+    }
+
+    const contrastBg = getContrast(bg, fg);
+    const levelBg = contrastBg >= 7 ? 'aaa' : (contrastBg >= 4.5 ? 'aa' : (contrastBg >= 3 ? 'aa-bold' : undefined));
+
+    return {
+      bg: {value: contrastBg, level: levelBg},
+    };
+  }
+
+  function updateContrastValues() {
+    Array.from(document.querySelectorAll('span')).forEach(el => {
+      const contrast = calculateContrast(el);
+      if (contrast.bg.value.toFixed(2) < 4.5 && !el.classList.contains('level-a')) {
+        el.classList.add('low-contrast');
+      } else if (contrast.bg.value.toFixed(2) < 3) {
+        el.classList.add('low-contrast');
+      } else {
+        el.classList.remove('low-contrast');
+      }
+      let contrastVal;
+      if (!(contrastVal = el.querySelector('.contrast-value'))) {
+        contrastVal = document.createElement('em');
+        contrastVal.className = 'contrast-value';
+        el.appendChild(contrastVal);
+      }
+      contrastVal.textContent = contrast.bg.value.toFixed(2);
+    });
+  }
+
+  const cssText = document.querySelector('#css-text');
+  const css = document.querySelector('#css')
+
+  cssText.oninput = () => {
+    css.innerHTML = `html { ${cssText.value} }`;
+    updateContrastValues();
+  }
+
+  requestAnimationFrame(() => {
+    updateContrastValues();
+  });
+</script>
 
 </body>
-
 </html>
