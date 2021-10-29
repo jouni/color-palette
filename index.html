@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>Lumo color palette generator and contrast checker</title>
   <link rel="stylesheet" href="current-lumo.css">
+  <link rel="stylesheet" href="light-palette.css">
   <style>
     html {
       color: var(--body-text-color);
@@ -315,75 +316,17 @@
     }
   </style>
   <script type="module">
-    import {BezierEasing} from './BezierEasing.js';
     import {normal as blendColors} from './node_modules/color-blend/dist/index.mjs';
     import {getComputedColor, getContrast, hslToRgb, luminance} from './ColorUtil.js';
 
-    function generatePalette(props) {
-      const {
-        name,
-        values = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900],
-        base = {h:0, s:0, l:100, a:1},
-        hue = base.h,
-        saturation = base.s,
-        contrastStart = -1,
-        contrastEnd = 1,
-        contrastCurve = [0, 0, 1, 1], // linear
-        alphaStart = 1,
-        alphaEnd = 1,
-        alphaCurve = [0, 0, 1, 1], // linear
-      } = props;
-
-      const lightnessBase = base.l / 100;
-      const dark = lightnessBase < 0.5;
-
-      let lightnessStart = lightnessBase + (dark ? (1 - lightnessBase) * contrastStart : lightnessBase * -contrastStart);
-      if (contrastStart < 0) {
-        lightnessStart = lightnessBase + (dark ? lightnessBase * contrastStart : (1 - lightnessBase) * -contrastStart);
-      }
-
-      let lightnessEnd = lightnessBase + (dark ? (1 - lightnessBase) * contrastEnd : lightnessBase * -contrastEnd);
-      if (contrastEnd < 0) {
-        lightnessEnd = lightnessBase + (dark ? lightnessBase * contrastEnd : (1 - lightnessBase) * -contrastEnd);
-      }
-      const lightnessBezier = new BezierEasing(contrastCurve);
-      const alphaBezier = new BezierEasing(alphaCurve);
-
-      const colors = values.map((val, i) => {
-        const sample = values.length > 1 ? i / (values.length - 1) : 0;
-
-        let lightness = lightnessStart + (lightnessEnd - lightnessStart) * lightnessBezier(sample);
-        lightness = Math.min(100, Math.round(lightness * 100));
-
-        let alpha = alphaStart + (1 - alphaStart) * alphaBezier(sample) * alphaEnd;
-        alpha = Math.min(1, Math.round((alpha + Number.EPSILON) * 100) / 100);
-
-        // Saturation scales together with opacity
-        let s = Math.round(Math.max(0, saturation - (1-alpha)*0.4*saturation));
-
-        return { h: hue, s, l: lightness, a: alpha, name: `${val}` };
-      });
-
-      return {name, colors, dark};
-    }
-
-    function addPaletteCustomProps(palette) {
-      let props = palette.colors.map(({h, s, l, a, name}) => `--${palette.name}-${name}: hsla(${h}, ${s}%, ${l}%, ${a});`).join('\n');
-
-      const styleEl = document.createElement('style');
-      styleEl.classList.add(palette.name);
-      styleEl.classList.toggle('dark', palette.dark);
-      document.head.appendChild(styleEl);
-      styleEl.sheet.insertRule(`${palette.dark ? '.dark' : 'html'} { ${props} }`);
-    }
-
     function renderPalette(palette) {
+      palette.values = palette.values || [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
       return `
       <h3>${palette.name}</h3>
       <section class="palette ${palette.name}${palette.dark ? ' dark': ''}">
-        ${palette.colors.map(({h, s, l, a, name}) => `
-          <div class="swatch swatch-${name}">
-            <span class="color" style="background-color: hsla(${h},${s}%,${l}%,${a});">${name}</span>
+        ${palette.values.map(val => `
+          <div class="swatch swatch-${palette.name}-${val}">
+            <span class="color" style="background-color: var(--${palette.name}-${val});">${val}</span>
           </div>`
         ).join('')}
       </section>
@@ -391,9 +334,7 @@
     }
 
     function appendPalette(paletteConf) {
-      const palette = generatePalette(paletteConf);
-      addPaletteCustomProps(palette);
-      document.querySelector(`${(palette.dark) ? '.dark' : '.light'} .palettes`).innerHTML += renderPalette(palette);
+      document.querySelector(`.light .palettes`).innerHTML += renderPalette(paletteConf);
     }
 
     function calculateContrast(el) {
@@ -437,120 +378,12 @@
       };
     }
 
-    // TODO treat light and dark palettes the same, just add a preset button for the dark palette (assuming there would be color pickers to choose the colors)
-    // Evolve this into a @vaadin/lumo-color package, which only contains the color palette generator and contains the default color style sheets (light.css and dark.css)
-    // Write the selector as `html, :host`, so that the same style sheet can be applied to the document and shadow roots
-    // Create a JS utility that can transform the selector to something more specific, e.g. `html.dark, :host(.dark)`
+    appendPalette({name: 'gray'});
 
     let ligthPalettes = document.querySelector('.light');
     let darkPalettes = ligthPalettes.cloneNode(true);
     darkPalettes.className = 'dark';
     ligthPalettes.parentNode.appendChild(darkPalettes);
-    ligthPalettes = ligthPalettes.querySelector('.palettes');
-    darkPalettes = darkPalettes.querySelector('.palettes');
-
-
-    const baseLight = {h:210, s:14, l:100};
-    const baseDark =  {h:210, s:14, l:10};
-
-
-    const gray = {
-      name: 'gray',
-      base: baseLight,
-      contrastStart: 0.2,
-      contrastEnd: 0.9,
-      contrastCurve: [0.5, 0.2, 0.48, 0.4],
-      alphaStart: 0.2,
-      alphaCurve: [0.3, 0.4, 0.4, 1]
-    }
-    appendPalette(gray);
-    appendPalette({...gray,
-      base: baseDark,
-      contrastStart: 0.23,
-      contrastEnd: 1,
-      // contrastCurve: [0.5, 0.2, 0.65, 0.3]
-    });
-
-
-    const blue = {
-      name: 'blue',
-      base: baseLight,
-      contrastStart: 0.3,
-      contrastEnd: 0.82,
-      saturation: 90,
-      contrastCurve: [0.5, 0.2, 0.5, 0.5],
-      alphaStart: 0.15,
-      alphaCurve: [0, 0, 0.3, 1.3]
-    };
-    appendPalette(blue);
-    appendPalette({...blue,
-      base: baseDark,
-      saturation: 80,
-      // contrastStart: 0.3,
-      // contrastEnd: 0.82,
-      // contrastEnd: 0.75,
-      // contrastCurve: [1, 0, 0.3, 0.4],
-      alphaCurve: [0.1, 0, 0.28, 1.57]
-    });
-
-
-    const red = {
-      name: 'red',
-      hue: 3,
-      base: baseLight,
-      contrastStart: 0.3,
-      contrastEnd: 0.86,
-      saturation: 80,
-      contrastCurve: [0.5, 0, 0.5, 0.5],
-      alphaStart: 0.15,
-      alphaCurve: [0, 0, 0.3, 1.3]
-    };
-    appendPalette(red);
-    appendPalette({...red,
-      base: baseDark,
-      saturation: 70,
-      // contrastStart: 0.4,
-      // contrastEnd: 0.88,
-      // contrastCurve: [1, 0., 0.3, 0.25],
-      alphaCurve: [0.1, 0, 0.28, 1.57]
-    });
-
-
-    const green = {
-      name: 'green',
-      hue: 145,
-      base: baseLight,
-      contrastStart: 0.35,
-      contrastEnd: 0.95,
-      saturation: 85,
-      // contrastCurve: [0.6, 0.6, 0.2, 0.65],
-      alphaStart: 0.15,
-      alphaCurve: [0.1, 0, 0.3, 1.3]
-    };
-    appendPalette(green);
-    appendPalette({...green,
-      base: baseDark,
-      // saturation: 65,
-      contrastStart: 0.25,
-      contrastEnd: 0.4,
-      // contrastCurve: [1, 0, 0.4, 0.2],
-      alphaCurve: [0.1, 0, 0.28, 1.57]
-    });
-
-
-    const surface = {
-      name: 'surface',
-      base: baseLight,
-      values: [1,2,3],
-      contrastStart: 0.08,
-      contrastEnd: 0
-    };
-    appendPalette(surface);
-    appendPalette({...surface,
-      base: baseDark,
-      contrastStart: 0,
-      contrastEnd: 0.07
-    });
 
     window.updateContrastInfo = function() {
       requestAnimationFrame(() => {
