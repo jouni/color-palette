@@ -251,7 +251,7 @@
     flex-direction: column;
     max-height: calc(100vh - 2rem);
     position: sticky;
-    top: 0;
+    top: 1rem;
     font-family: monospace;
     font-size: 1rem;
   }
@@ -270,11 +270,14 @@
 </head>
 <body>
 
-<label class="css-text">
+<div class="css-text">
 html {
 <textarea id="css-text"></textarea>
+}<br>
+[theme~="dark"] {
+<textarea id="css-text-dark"></textarea>
 }
-</label>
+</div>
 
 <div>
 <div class="light">
@@ -457,12 +460,16 @@ html {
   }
 
   const cssText = document.querySelector('#css-text');
-  const css = document.querySelector('#css')
+  const cssTextDark = document.querySelector('#css-text-dark');
+  const css = document.querySelector('#css');
 
-  cssText.oninput = () => {
-    css.innerHTML = `html { ${cssText.value} }`;
+  const updateCss = () => {
+    css.innerHTML = `html { ${cssText.value} } .dark { ${cssTextDark.value} }`;
     updateContrastValues();
   }
+
+  cssText.oninput = updateCss;
+  cssTextDark.oninput = updateCss;
 
   requestAnimationFrame(() => {
     updateContrastValues();
