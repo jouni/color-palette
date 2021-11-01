@@ -343,12 +343,22 @@ html {
 </div>
 
 <div class="light">
+  <select id="lightBg">
+    <option value="5">5% contrast</option>
+    <option value="10">10% contrast</option>
+    <option value="20">20% contrast</option>
+  </select>
   <div class="dim"></div>
 </div>
 
 <div class="dark"></div>
 
 <div class="dark">
+  <select id="darkBg">
+    <option value="5">5% contrast</option>
+    <option value="10">10% contrast</option>
+    <option value="20">20% contrast</option>
+  </select>
   <div class="dim"></div>
 </div>
 
@@ -457,6 +467,17 @@ html {
   requestAnimationFrame(() => {
     updateContrastValues();
   });
+
+  const ligthBg = document.querySelector('#lightBg');
+  const darkBg = document.querySelector('#darkBg');
+
+  const bgSelectChanged = (e) => {
+    e.target.nextElementSibling.style.backgroundColor = `var(--lumo-contrast-${e.target.value}pct)`;
+    updateContrastValues();
+  };
+
+  lightBg.onchange = bgSelectChanged;
+  darkBg.onchange = bgSelectChanged;
 </script>
 
 </body>
